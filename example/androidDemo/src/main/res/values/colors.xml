@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="num_bg">#698aa2</color>
+     <color name="num_bg_p">#1ea6d2</color>
+    <color name="background_tab_pressed">#6633B5E5</color>
+    <color name="bgwhite">#F0F2F7</color>
+    <color name="circlewhite">#FFFFFF</color>
+    <color name="circleorange">#FF7E63</color>
+    <color name="circlegreen">#56DFB6</color>
+    <color name="circlepurple">#B7A1F4</color>
+    <color name="white">#ffffffff</color>
+    <color name="unfocused">#cccccccc</color>
+    <color name="pressed">#fff22fff</color>
+    <color name="selected">#30000000</color>
+    <color name="focused">#30000000</color>
+    <color name="subtitle_color">#ff494949</color>
+    <color name="color_white">#ffffffff</color>
+    <color name="color_shadow">#ff333333</color>
+    <color name="cache_color_hint">#00000000</color>
+    <color name="color_divider">#ffdddddd</color>
+    <color name="color_black">#ff000000</color>
+    <color name="color_less_black">#ee000000</color>
+    <color name="color_info">#ff7F7F7F</color>
+    <color name="more_subtitle">#ff0044ff</color>
+    <color name="color_blue">#ff0000ff</color>
+    <color name="color_bg_less_shadow">#ff888888</color>
+    <color name="color_green">#ff00dd11</color>
+    <color name="color_grey">#88888888</color>
+    <color name="color_line">#ff444444</color>
+    <color name="color_top_bg">#ff333333</color>
+    <color name="color_grid_pressed">#FF0EAAE4</color>
+    <color name="color_grid_bg">#ff0caae4</color>
+    <color name="color_setting_title_bg">#ff888888</color>
+    <color name="color_less_blue">#ff32aff6</color>
+    <color name="color_ptz_blue">#ff0044aa</color>
+    <color name="color_bg">#ff666666</color>
+    <color name="button_bg_no">#60ffffff</color>
+    <color name="tab_off">#ededed</color>
+    <color name="black">#21292C</color>
+    <color name="purity_black">#000000</color>
+    <color name="npurity_black">#21292C</color>
+    <!-- 未选中 -->
+    <!-- 偏白色 -->
+    <color name="tab_on">#FF9933</color>
+    <!-- 选中 -->
+    <!-- 橙色 -->
+    <color name="dl_blueline">#DAE3EE</color>
+    <!-- 弹出对话框蓝色条 -->
+    <color name="dl_middleline">#F6F8FA</color>
+    <color name="dl_middleline2">#FBFBFB</color>
+    <color name="dl_line">#E5E9EC</color>
+    <color name="dl_line1">#DBE0E6</color>
+    <!-- 弹出对话框有checkbox的分割线 -->
+
+    <color name="dl_middleline1">#E3EAF0</color>
+
+    <!-- 弹出对话框有checkbox的蓝色条 -->
+    <!-- tab选择状态的颜色值 -->
+    <color name="tabchoosed">#10000000</color>
+    <color name="tabunchoosed">#00000000</color>
+    <color name="orange">#FFAB59</color>
+    <!-- #D7D7D7 -->
+    <color name="notlinetxt">#FFFF80</color>
+    <color name="contents_text">#ff000000</color>
+    <color name="encode_view">#ffffffff</color>
+    <color name="possible_result_points">#c0ffbd21</color>
+    <!-- Android standard ICS color -->
+    <color name="result_minor_text">#ffc0c0c0</color>
+    <color name="result_points">#c099cc00</color>
+    <!-- Android standard ICS color -->
+    <color name="result_text">#ffffffff</color>
+    <color name="result_view">#b0000000</color>
+    <color name="status_text">#ffffffff</color>
+    <color name="transparent">#00000000</color>
+    <color name="viewfinder_laser">#ffcc0000</color>
+    <!-- Android standard ICS color -->
+    <color name="viewfinder_mask">#60000000</color>
+    <!-- 摄像头 bycdh -->
+
+    <color name="alpha">#00000000</color>
+    <color name="half_alpha">#b0000000</color>
+    <color name="listview_foucs">#E4E4E4</color>
+    <color name="home_bg_color">#f7f7f7</color>
+    <color name="playback_btn">#90000000</color>
+    <color name="playback_btn_p">#e0f7f7f7</color>
+    <color name="menu_checked_color">#4cb9eb</color>
+    <color name="menu_unchecked_color">#e0e0e0</color>
+    <color name="tar_bar">#449DDB</color>
+    <color name="btn_bottom">#3390CF</color>
+    <color name="btn_cen">#4EAEEC</color>
+    <color name="btn_top">#63C1FF</color>
+    <color name="green">#3fc259</color>
+    <color name="merchant_name_color">#3e3e3e</color>
+    <color name="add_more_background">#40B5B5B5</color>
+    <color name="font_color">#7a7979</color>
+    <color name="exitcolor">#3b3b3b</color>
+    <color name="profile_button_color">#CDC7BD</color>
+    <color name="color_gray">#cccccc</color>
+    <color name="reseda">#ff9acd32</color>
+    <!-- 嫩绿色 -->
+    <color name="bg_color">#EDECEC</color>
+    <color name="activity_color">#EEEEEE</color>
+    <color name="keyboard_user_name">#3E91CB</color>
+    <color name="blue">#ff61a9e1</color>
+    <color name="light_blue">#219cc0</color>
+    <color name="alpha_blue">#a0171717</color>
+    <color name="match_user">#4196d0</color>
+    <color name="btn_highlight">#48708C</color>
+    <color name="profile_bg">#EDECEC</color>
+    <color name="dialog_title">#52a0e0</color>
+    <color name="text_color_light">#848484</color>
+    <color name="text_color">#123456</color>
+    <color name="bg_infrared">#80000000</color>
+    <color name="bg_infrared_p">#219cc0</color>
+    <!-- new -->
+    <color name="gray">#cccccccc</color>
+    <color name="dialog_back_color">#90000000</color>
+    <color name="text_color_white">#ffffff</color>
+    <!-- 白色 -->
+    <color name="text_color_black">#444242</color>
+    <!-- 黑色 -->
+    <color name="text_color_blue">#52a0e0</color>
+    <!-- 蓝色 -->
+    <color name="text_color_green">#7bdc70</color>
+    <!-- 绿色 -->
+    <color name="text_color_gray">#616161</color>
+    <!-- 灰色 -->
+    <color name="text_color_red">#c5101a</color>
+    <!-- 红色 -->
+    <color name="color_local_device_bar">#5ab8ff</color>
+    <!-- 红色 -->
+    <color name="dialog_title_color">#a4979b</color>
+    <color name="edit_mask">#80000000</color>
+    <color name="port_filldialog_bg">#F2F3F8</color>
+
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Non focused states -->
+    <item android:state_focused="false" android:state_selected="false" android:state_pressed="false" android:drawable="@color/focused" />
+    <item android:state_focused="false" android:state_selected="true" android:state_pressed="false" android:drawable="@color/color_grid_bg" />
+    <!-- Focused states -->
+    <item android:state_focused="true" android:state_selected="false" android:state_pressed="false" android:drawable="@color/color_grid_bg" />
+    <item android:state_focused="true" android:state_selected="true" android:state_pressed="false" android:drawable="@color/color_grid_bg" />
+    <!-- Pressed -->
+    <item android:state_selected="true" android:state_pressed="true" android:drawable="@color/color_grid_bg" />
+    <item android:state_pressed="true" android:drawable="@color/color_grid_bg" />
+</selector>

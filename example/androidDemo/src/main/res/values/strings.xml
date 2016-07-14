@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="app_name">V3_透传Demo</string>
+    <string name="register_failure">注册失败,请重试！</string>
+    <string name="register_success">注册成功！</string>
+    <string name="register_no_blank">"UID,用户名及密码,皆不可为空,密码长度不得低于四位,请检查后重试"</string>
+    <string name="alertrelogin">无法正常连接到互联网，是否切换为内网模式？</string>
+</resources>

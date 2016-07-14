@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="40dp"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="top"
+        android:background="#3ABAE4" >
+
+        <TextView
+            android:id="@+id/set_accessid_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="修改资源ID(会重启程序)"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:paddingLeft="10dp"
+        android:text="Company ID:"
+        android:textColor="#6E6E6E" />
+
+    <io.xlink.wifi.pipe.view.ClearableEditText
+        android:id="@+id/edit_company_id"
+        android:layout_width="fill_parent"
+        android:hint="请输入Company ID:"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textSize="16sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:paddingLeft="10dp"
+        android:text="Email:"
+        android:textColor="#6E6E6E" />
+    <io.xlink.wifi.pipe.view.ClearableEditText
+        android:id="@+id/edit_email"
+        android:layout_width="fill_parent"
+        android:hint="请输入邮箱:"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textSize="16sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:paddingLeft="10dp"
+        android:text="Password:"
+        android:textColor="#6E6E6E" />
+    <io.xlink.wifi.pipe.view.ClearableEditText
+        android:id="@+id/edit_passwd"
+        android:layout_width="fill_parent"
+        android:hint="请输入密码:"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:paddingLeft="10dp"
+        android:text="请填入正确的CompanyID Email Password, 点确定后,APP会使用填入的Email注册一个用户账号,需要去收邮件激活账号后,在点击确定按钮."
+        android:textColor="#6E6E6E" />
+
+</LinearLayout>

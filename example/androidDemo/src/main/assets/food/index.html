@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>食谱-首页</title>
+    <meta name="keyword" content="">
+    <meta name="description" content="">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="cleartype" content="on">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-TileColor" content="#F6F6F6">
+    <link href="./styles/main.css" rel="stylesheet"><!--[if lt IE 9]>
+    <script src="http://cdn.staticfile.org/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+</head>
+<!-- href="list.html"  href="menu-list.html" -->
+<body>
+<header class="header">
+    <h1>分类</h1>
+    <a rel="e:return" class="return hidden">菜品</a>
+</header>
+<div class="page-content" id="page_content">
+    <div class="category-list" id="page_1">
+        <ul id="groups_list">
+
+        </ul>
+    </div>
+    <div class="link-list" id="page_2">
+        <ul>
+            <li><a>子分类</a></li>
+        </ul>
+    </div>
+    <div id="page_3" class="menu-list">
+        <ul>
+
+        </ul>
+    </div>
+    <div id="page_4" class="menu-details">
+
+    </div>
+    <div id="page_5" class="menu-details">
+
+    </div>
+</div>
+<div class="ui-tips hidden" id="ui_tips">
+    <div class="ui-tips-body">正在启动食谱</div>
+</div>
+<div class="ui-modal hidden" id="ui_modal">
+    <div class="ui-modal-body">
+        <div class="ui-modal-content">
+            <h3>智能烤箱</h3>
+            <p>是否结束当前烧烤</p>
+        </div>
+        <div class="ui-modal-actions"><a href="#" rel="e:cancelmodal">取消</a><a href="#" rel="e:surestop">确定</a></div>
+    </div>
+</div>
+<script src="./js/zepto.min.js"></script>
+<script src="./js/base.js"></script>
+<script src="./js/main.js"></script>
+<script>
+    Food.PD.set({
+        path : 'index'
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/indextitleimg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/index_title" />
+
+            <ImageView
+                android:id="@+id/notice_left_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/indextitleimg"
+                android:layout_below="@+id/indextitleimg"
+                android:layout_marginLeft="56dp"
+                android:layout_marginTop="83dp"
+                android:background="@drawable/notice_left" />
+
+            <ImageView
+                android:id="@+id/cgq_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@+id/notice_left_img"
+                android:layout_below="@+id/notice_left_img"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="53dp"
+                android:background="@drawable/cgq_lv" />
+
+            <ImageView
+                android:id="@+id/notice_right_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@+id/indextitleimg"
+                android:layout_below="@+id/indextitleimg"
+                android:layout_marginRight="27dp"
+                android:layout_marginTop="29dp"
+                android:background="@drawable/notice_right" />
+        </RelativeLayout>
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            layout="@layout/devicedata_dialog" />
+    </FrameLayout>
+
+</RelativeLayout>

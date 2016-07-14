@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="40dp"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/action_title"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="top"
+        android:background="#3ABAE4" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="修改产品ID"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:paddingLeft="10dp"
+        android:text="ProductID:"
+        android:textColor="#6E6E6E" />
+
+    <io.xlink.wifi.pipe.view.ClearableEditText
+        android:layout_marginTop="5dp"
+        android:id="@+id/edit_pid"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入product id"
+        android:singleLine="true"
+        android:textSize="16sp" />
+
+
+</LinearLayout>

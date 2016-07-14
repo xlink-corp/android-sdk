@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bkg_mohu" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#90000000" >
+
+        <io.xlink.wifi.pipe.view.ColorPickerView
+            android:id="@+id/color_pv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:scaleType="matrix"
+            android:src="@drawable/rgb_image" />
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/color_pv"
+            android:layout_marginTop="40dp"
+            android:padding="5dp" >
+
+            <ImageView
+                android:id="@+id/light_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/control_light_offon" />
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/light_switch"
+                android:layout_alignTop="@id/light_switch"
+                android:layout_toRightOf="@id/light_switch"
+                android:background="#FFFFFF"
+                android:gravity="center" >
+
+                <ImageView
+                    android:id="@+id/imageView1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_toLeftOf="@+id/riv"
+                    android:background="@drawable/progress_white_line" />
+
+                <SeekBar
+                    android:id="@+id/light_seekBar"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_toLeftOf="@id/riv"
+                    android:maxHeight="8dp"
+                    android:progressDrawable="@drawable/progress_bar_layer"
+                    android:thumb="@drawable/progress_moving_line" />
+
+                <io.xlink.wifi.pipe.view.RGBMySelectCircle
+                    android:id="@+id/riv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/light_seekBar"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@id/light_seekBar"
+                    android:layout_centerVertical="true"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="4dp" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/relativeLayout1"
+            android:background="@drawable/dialog_bottom1"
+            android:visibility="gone" >
+
+            <TextView
+                android:id="@+id/tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="提示" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</FrameLayout>
