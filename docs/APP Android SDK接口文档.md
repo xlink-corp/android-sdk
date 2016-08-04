@@ -13,9 +13,13 @@
 
 ### 2.集成准备
 
-* 注册云智易企业帐号http://admin.xlink.cn/#!/login
-* 新建产品，定义设备的数据端点
-* 获取到产品PID,产品密钥,企业ID(corp_id)
+* 注册云智易企业帐号 http://admin.xlink.cn/#!/register
+  在注册界面填写相关信息后,点击注册按钮,系统会向注册邮箱发一份激活邮件，    点击激活链接进行激活
+* 激活之后在 http://admin.xlink.cn/#!/login 进行登陆
+* 云平台首页中左侧栏点击添加产品进行产品的添加，输入产品描述并点击添加
+* 获取到产品PID,产品密钥,企业ID(corp_id  点击右上角用户昵称，企业信息)
+
+#####这样，前期的准备工作就算完成了。
 
 ### 3.配置程序
 (参考Demo程序AndroidManifest.xml文件)
@@ -26,6 +30,8 @@
 	<service android:name="io.xlink.wifi.sdk.XlinkUdpService" />               
 	<!-- XLINK 公网服务 -->
 	<service android:name="io.xlink.wifi.sdk.XlinkTcpService" />
+	
+	注意：如果缺少以上配置会造成sdk服务不能正常启动
 
 #### 3.2. 添加sdk所需要权限
 
@@ -38,15 +44,7 @@
 	<!-- wifi状态改变 -->
 	<uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
 
-### 4.混淆打包
 
-如果的项目使用了Proguard混淆打包，为了避免SDK被二次混淆导致无法正常使用SDK，请务必在proguard-project.txt中添加以下代码：
-
-	-libraryjars libs/xlink-wifi-sdk-v*.jar #（集体请查看jar名称）
-	-dontwarn io.xlink.wifi.sdk.**
-	-keep class io.xlink.wifi.sdk.**{
-	         *;
-	}
 
 ## 二.配置SDK  
 (可参考Demo程序MyApp.java文件)
@@ -65,72 +63,103 @@
 请确保使用sdk的功能前最少设置一个通用监听器：
 
 	XlinkAgent.getInstance().addXlinkListener(XlinkNetListener);
+	
+	private XlinkNetListener XlinkNetListener = new XlinkNetListener() {
+        
+        @Override
+        public void onStart(int code) {
+            //监听启动sdk成功/失败回调
+        }
+
+        // 回调登录xlink状态
+        @Override
+        public void onLogin(int code) {
+           
+            if (code == XlinkCode.SUCCEED) {
+                //云端网络连接成功回调
+               
+            } else if (code == XlinkCode.CLOUD_CONNECT_NO_NETWORK) {
+             //   XlinkUtils.shortTips("网络不可用，请检查网络连接");
+            }
+        }
+
+        @Override
+        public void onLocalDisconnect(int code) {
+            if (code == XlinkCode.LOCAL_SERVICE_KILL) {
+                // 这里是xlink服务被异常终结了（第三方清理软件，或者进入应用管理被强制停止应用/服务）
+                XlinkAgent.getInstance().start();//进行重启操作
+            }
+            XlinkUtils.shortTips("本地网络已经断开");
+        }
+
+        @Override
+        public void onDisconnect(int code) {
+            //云端连接断开回调
+        }
+
+        @Override
+        public void onRecvPipeData(XDevice xdevice, byte[] data){
+          //收到 局域网设备推送的pipe数据
+        }
+
+        @Override
+        public void onRecvPipeSyncData(XDevice xdevice, byte[] data) {
+        //收到设备通过云端服务器推送的pipe数据
+        }
+
+        @Override
+        public void onDeviceStateChanged(XDevice xDevice, int i) {
+          //设备状态改变回调
+        }
+
+        @Override
+        public void onDataPointUpdate(XDevice xDevice, List<DataPoint> var2,int i2) {
+            //数据端点的更新回调
+        }
+
+        @Override
+        public void onEventNotify(EventNotify eventNotify) {
+
+           //云端推送数据 
+        }
+    };
 
 该监听器的功能有：(具体回调请参见XlinkNetListener说明)
 
 value
 
 
-函数：|说明：										
----| ---| ---								
+函数：|说明：									
+---| ---| ---	 				
 onStart(int code);| 监听启动sdk成功/失败回调 			
 onLogin(int code);|监听login登录服务器成功/失败回调
 onLocalDisconnect(int code);|监听本地局域网断开回调
 onDisconnect(int code);|监听和云端服务器连接状态回调
-onRecvPipeData (XDevice device,byte flags, byte[] data);|	收到设备发送Pipe数据
-onRecvPipeSyncData(XDevice device, byte flags,byte[] data);|收到设备发送同步Pipe数据
+onRecvPipeSyncData(XDevice device,byte[] data);|收到设备发送同步Pipe数据
 onDeviceStateChanged(XDevice xdevice, int state);|设备状态改变
-onDataPointUpdate(XDevice xDevice, int key, Object , int channel, int type);|设备数据端点改变（V2版本SDK已废弃）
+onDataPointUpdate(XDevice xDevice, List<DataPoint> dataPionts, int channel);|设备数据端点改变
 onEventNotify(EventNotify eventNotify)|应用内推送回调
 
 注意事项:
 
-当不需要该监听器时，可以调用
+1.当不需要该监听器时，可以调用
 		 
 	XlinkAgent.getInstance().removeListener(XlinkNetListener)
 进行移除。
 
-### 3.设置设备数据模版
+2.回调前需要调用 
 
-如果设备使用了数据端点，需要根据在后端定义的设备数据端点在SDK进行配置，这样SDK才能解析该设备端点。 
+     XlinkAgent.getInstance().login(appid, authKey); 
+进行云端登陆才能正常回调，appId和authKey是调用登陆接口返回的用户数据
 
-例如下面表格样的数据端点：
-
-索引（key）|变量名|  备注  |数据类型（type）
-----|----|----|-----
-0|LED|三色灯|单字节
-1|KEY|KEY1(按键1)|布尔
-2|inr|红外感应距离|单字节
-3|Temp|温湿度|短整型
-4|RF_IN|无线遥控码|长整型
-5|Name|同步名称|字符串
-...|...|...|...
-
-转化成json串为：
-
-	[{"key":0,"type":"byte"},{"key":1,"type":"bool"},{"key":2,"type":"byte"},{"key":3,"type":"int16"},{"key":4,"type":"int32"},{"key":5,"type":"string"}]
-
-通过函数：
-
-	XlinkAgent.setDataTemplate(“设备的产品id”, prodctid_value);
-
-进行设置数据端点（可参考demo程序MyApp.java）
-
-### 注意事项:
-
-* 扫描,操作设备之前需先设置该设备的数据端点；(必须设置，不然解析不出数据端点)
-* 如该设备未定义数据端点也需要这样设置： XlinkAgent.setDataTemplate(“该设备的产品id”,“[]”);
-* 该设备的产品id 可在企业管理平台查看；
-* SDK支持多产品ID；
-* **V2版本SDK已废弃数据端点功能**
 
 ## 三.登录/注册 厂商自己的用户体系
 
 ### 1. 概述
 参考文档:[http://support.xlink.cn/hc/kb/article/89925/](http://support.xlink.cn/hc/kb/article/89925/) 调用HTTP接口进行用户注册和用户认证,注册用户可通过企业管理后台进行用户管理
-通过HTTP接口进行用户认证后, 可以获取该用户在云智易平台的唯一user_id access_token。获取到 user_id 后，调用：
+通过HTTP接口进行用户认证后, 可以获取该用户在云智易平台的唯一user_id auth_key。获取到 user_id 后，调用：
 
-	XlinkAgent.getInstance().login(user_id,access_token);
+	XlinkAgent.getInstance().login(user_id,auth_Key);
 
 才能使用云端网络和设备功能。
 
@@ -201,12 +230,12 @@ mContext | ApplicationContext实例
  
 >详情请参见XlinkNetListener 说明
 
-### 3.int login(int user_id, String access_token)
+### 3.int login(int user_id, String app_key)
 
 #### 说明：
 
-* 使用user_id和access_token登录到CM服务器。user_id和access_token的获取，请查看demo代码及用户HTTP接口开发文档 
-* 获取到的user_id和access_token，由外部APP缓存维护。
+* 使用user_id和appkey登录到CM服务器。user_id和appkey的获取，请查看demo代码及用户HTTP接口开发文档 
+* 获取到的user_id和app_key，由外部APP缓存维护。
 * 该方法不用重复调用，调用一次后，会自己断线重连
 * 只有login成功后，才能使用跟云端有关的服务
 
@@ -215,7 +244,7 @@ mContext | ApplicationContext实例
 | 参数 | 说明 |
 | --- | --- |
 | user_id | 通过HTTP接口获取到的连接云端的用户ID |
-| access_token | 连接云端认证码 |
+| app_key | 连接云端认证码 |
 
 #### 返回值：
 
@@ -259,6 +288,7 @@ false | 添加设备失败，设备属性错误
 
 * 添加数据模版,在企业管理台定义的设备数据端点
 * **V2版本SDK已废弃数据端点功能**
+* 
 #### 参数：
 
 | 值 | 说明 |
@@ -897,7 +927,53 @@ XlinkCode | INT值 | 说明
 	
 #### code定义：
 	返回的code 跟SendPipeListener  一样
+	
+##八.数据端点
+### 3.设置设备数据模版
 
+如果设备使用了数据端点，需要根据在后端定义的设备数据端点在SDK进行配置，这样SDK才能解析该设备端点。 
+
+例如下面表格样的数据端点：
+
+索引（key）|变量名|  备注  |数据类型（type）
+----|----|----|-----
+1|LED|三色灯|单字节
+2|KEY|KEY1(按键1)|布尔
+3|inr|红外感应距离|单字节
+4|Temp|温湿度|短整型
+5|RF_IN|无线遥控码|长整型
+6|Name|同步名称|字符串
+...|...|...|...
+
+转化成json串为：
+
+	[{"key":1,"type":"byte"},{"key":2,"type":"bool"},{"key":3,"type":"byte"},{"key":4,"type":"int16"},{"key":5,"type":"int32"},{"key":6,"type":"string"}]
+
+通过函数：
+
+	XlinkAgent.setDataTemplate(“设备的产品id”, prodctid_value);
+
+进行设置数据端点（可参考demo程序MyApp.java）
+
+### 注意事项:
+
+* 扫描,操作设备之前需先设置该设备的数据端点；(必须设置，不然解析不出数据端点)
+* 如该设备未定义数据端点也需要这样设置： XlinkAgent.setDataTemplate(“该设备的产品id”,“[]”);
+* 该设备的产品id 可在企业管理平台查看；
+* SDK支持多产品ID；
+
+
+##九.进行打包混淆
+
+### 1.混淆打包
+
+如果的项目使用了Proguard混淆打包，为了避免SDK被二次混淆导致无法正常使用SDK，请务必在proguard-project.txt中添加以下代码：
+
+	-libraryjars libs/xlink-wifi-sdk-v*.jar #（具体请查看jar名称）
+	-dontwarn io.xlink.wifi.sdk.**
+	-keep class io.xlink.wifi.sdk.**{
+	         *;
+	}
 
 
 

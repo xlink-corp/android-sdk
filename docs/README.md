@@ -49,11 +49,13 @@
 ### 1.2、<a name="sdk_Introduction">APP SDK 简介</a>
 
 **为简化开发者的APP开发，云智易提供了APP开发套件和相关的支持服务：**
+
 - 提供APP的SDK和开发文档，兼容iOS、Android平以及HTML5嵌入式界面
 - 提供APP端通用业务功能块的实例源代码，极大简化开发人员开发工作
 - 为企业用户提供专业的技术支持服务
 
 **APP开发套件包含以下主要功能：**
+
 - 自动扫描、发现可用设备
 - 设备绑定接口
 - 建立安全的本地和远程连接，以及心跳维持
@@ -128,7 +130,7 @@
 **Android**
 
 1. 打开Android Studio ，点击菜单 File->New->New Project... 创建一个新的工程；
-2. 把解压的 xlink-wifi-official-sdk-v2_14958.jar（具体jar名称可能有区别） 添加到工程 libs目录；
+2. 把解压的 xlink-wifi-official-sdk-v3_21048.jar（具体jar名称可能有区别） 添加到工程 libs目录；
 3. 在APP的build.gradle文件中添加sdk、json、http库的引用
 ```
  dependencies {
@@ -158,6 +160,8 @@
 		<service android:name="io.xlink.wifi.sdk.XlinkUdpService" />
 		<!-- XLINK 公网服务 -->
 		<service android:name="io.xlink.wifi.sdk.XlinkTcpService" />
+		
+		注意：如果缺少以上配置会造成sdk服务不能正常启动
 	```
 
 2. 添加sdk所需要权限
@@ -190,7 +194,7 @@
 	 </application>
 	```
 
-4. 在自定义Application 下的onCreate()函数调用XlinkAgent.init进行SDK初始化化
+4. 在自定义Application 下的onCreate()函数调用XlinkAgent.init进行SDK初始化
 
 	**Android 代码范例**
 	
@@ -345,7 +349,7 @@
 
 ###2.6 <a name="setp5" >Setp 5 添加设备</a>
 
-SDK封装了内网发现功能，可以使用SDK方法扫描发现内网连接的设备，并加入到SDK中。 也可以通过网络获取设备的必要参数，通过Json转成设备实体并添加到SDK中。 只有把设备对象添加到SDK中并初始化设备，才能进行设备的连接、控制等操作。
+SDK封装了内网扫描设备功能，可以使用SDK方法扫描发现内网连接的设备，并加入到SDK中。 也可以通过网络获取订阅设备的必要参数，通过Json转成设备实体并添加到SDK中。 只有把设备对象添加到SDK中并初始化设备，才能进行设备的连接、控制等操作。
 
 下面以云智易提供的设备模拟器模拟一个内网设备，并进行内网发现添加到APP。
 **实际项目如果使用Wifi模块进行开发，扫描设备之前需要先将设备配置Wifi连上路由器，具体配置方式请根据模块厂商提供的资料和SDK进行。**
@@ -402,10 +406,39 @@ SKD会根据网络连接情况自适应内外网络环境，会自动选择速�
 	![](image/云端连接.png)
 
 	**Android  调用示例**
-
-	```
-	//根据上一步内网发现的设备，使用AccesKey进行设备连接 如设备未设置AccessKey，连接前需要先进行AccessKey设置。
-    int ret = XlinkAgent.getInstance().connectDevice(device.getXDevice(),device.getAccessKey(), connectDeviceListener);
+	
+	订阅设备前，首先要获取设备的subKey才能进行订阅，可以先判断设备的subkey是否存在，若不存在则需要通过accessKey进行获取，调用方式如下：
+	
+	  
+	     if（device.getXDevice().getSubKey() <= 0 ){
+	    XlinkAgent.getInstance().getInstance().getDeviceSubscribeKey(device.getXDevice(), device.getXDevice().getAccessKey(), new GetSubscribeKeyListener() {
+                @Override
+                public void onGetSubscribekey(XDevice xdevice, int code, int subKey) {
+                    device.getXDevice().setSubKey(subKey);
+                    DeviceManage.getInstance().updateDevice(device);
+                }
+            });
+            }
+            
+ 通过上面步骤获取到设备的订阅凭证subKey后进行调用订阅的方法进行订阅
+ 
+ 
+                   XlinkAgent.getInstance().subscribeDevice(device.getXDevice(), device.getXDevice().getSubKey(), new SubscribeDeviceListener() {
+                @Override
+                public void onSubscribeDevice(XDevice xdevice, int code) {
+                    if (code == XlinkCode.SUCCEED) {
+                        device.setSubscribe(true);
+                    }
+                }
+            });
+     
+ 
+如果设备已经订阅，或者设备在订阅列表中存在，那么就不需要进行重复订阅了，那么就可以通过accessKey和subKey进行设备的链接，调用方式如下：
+	
+	
+	
+	//根据上一步内网发现的设备，使用AccesKey和subKey进行设备连接 如设备未设置AccessKey，连接前需要先进行AccessKey设置。
+    int ret = XlinkAgent.getInstance().connectDevice(device.getXDevice(),device.getXDevice().getAccessKey(),device.getXDevice().getSubKey(), connectDeviceListener);
         if (ret < 0) {// 调用设备失败
             //返回小于0 表示扫描失败， 具体错误码参见API文档附录
         }
@@ -589,6 +622,10 @@ _ _ _
 
 * 初始化xlink sdk,使用sdk前，必须调用
 
+**调用示例：**
+
+     XlinkAgent.init(mContext);
+
 **参数：**
 
 | 参数 | 说明 |
@@ -612,6 +649,10 @@ _ _ _
 | = 0 | 调用成功
 | < 0 | 调用失败,失败code请观看同步错误码;
 
+**调用示例：**
+
+    XlinkAgent.getInstance().start();
+
 **对应回调:**
 
 	XlinkNetListener.onStart(int code)
@@ -620,12 +661,12 @@ _ _ _
 
 _ _ _
 
-##### int login(int user_id, String access_token)
+##### int login(int user_id, String app_key)
 
 **方法说明：**
 
-* 使用user_id和access_token登录到CM服务器。user_id和access_token的获取，请查看demo代码及用户HTTP接口开发文档 
-* 获取到的user_id和access_token，由外部APP缓存维护。
+* 使用user_id和app_key登录到CM服务器。user_id和app_key的获取，请查看demo代码及用户HTTP接口开发文档 
+* 获取到的user_id和app_key，由外部APP缓存维护。
 * 该方法不用重复调用，调用一次后，会自己断线重连
 * 只有login成功后，才能使用跟云端有关的服务
 
@@ -634,7 +675,11 @@ _ _ _
 | 参数 | 说明 |
 | --- | --- |
 | user_id | 通过HTTP接口获取到的连接云端的用户ID |
-| access_token | 连接云端认证码 |
+| app_key | 连接云端认证码 |
+
+**调用示例：**
+
+    XlinkAgent.getInstance().login(user_id,app_key);
 
 **返回值：**
 
@@ -666,6 +711,10 @@ _ _ _
 | --- | --- |
 |XDevice | Device实体对象|
 
+**调用示例：**
+
+    XlinkAgent.getInstance().login(user_id,app_key);
+
 **返回值：**
 
 | 值 | 说明 |
@@ -689,6 +738,10 @@ _ _ _
 | --- | --- |
 |jsonObject | 设备的json对象
 
+**调用示例：**
+
+    XDevice xdevice = XlinkAgent.JsonToDevice(json);
+
 **返回值：**
 
 | 值 | 说明 |
@@ -703,6 +756,10 @@ _ _ _
 **方法说明：**
 
 * 如果需要存储设备，通过此接口把device序列话成JSONObject对象，然后存储
+
+**调用示例：**
+
+    JSONObject mObj = XlinkAgent.deviceToJson(device);
 
 **参数：**
 
@@ -720,6 +777,10 @@ _ _ _
 * 该函数会清空initDevice()后设备列表;
 * 清空addXlinkNetListener监听器列表；
 
+**调用示例：**
+
+    XlinkAgent.getInstance().stop();
+
 _ _ _
 
 ##### void addXlinkListener(XlinkNetListener listener)
@@ -727,6 +788,16 @@ _ _ _
 **方法说明：**
 
 * 添加XlinkNetListener 监听器，请确保全局至少有一个监听器。
+
+**调用示例：**
+
+    XlinkAgent.getInstance().addXlinkListener(listener);
+    
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+| listener | SDK回调监听
 _ _ _
 
 ##### void debug(boolean debug)
@@ -735,6 +806,13 @@ _ _ _
 
 * 设置日志是否打印
 
+**调用示例：**
+
+       XlinkAgent.getInstance().debug(debug);
+       
+| 参数 | 说明 |
+| --- | --- |
+| debug | 是否打印debug日志
 _ _ _
 
 ##### boolean isConnectedOuterNet()
@@ -742,6 +820,10 @@ _ _ _
 **方法说明：**
 
 * 判断是否连接上xlink服务器
+
+**调用示例：**
+
+    boolean isConnectOuterNet= XlinkAgent.getInstance().isConnectedOuterNet();
 
 **返回值：**
 
@@ -759,6 +841,10 @@ _ _ _
 
 * 判断sdk 是否启动本地内网服务
 
+**调用示例：**
+
+    boolean isConnectedLocal=XlinkAgent.getInstance(). isConnectedLocal();
+
 **返回值：**
 
 | 值 | 说明 |
@@ -771,35 +857,58 @@ _ _ _
 #### 3.2.2 Android 设备操作函数
 
 
-##### int scanDeviceByProductID(String productId,ScanDeviceListener listener)
+##### 扫描网关设备  int scanDeviceByProductID(String productId,ScanDeviceListener listener)
 
 **方法说明：**
 
 * 通过productid扫描内网内所有对应的设备;需开启wifi 并连接到设备所在的wifi网络
+
+**调用示例：**
+
+    int ret = XlinkAgent.getInstance().scanDeviceByProductId(pid, scanListener);
+           if (ret < 0) {
+                switch (ret) {
+                    case XlinkCode.NO_CONNECT_SERVER:
+                       //未开启局域网服务
+                        break;
+                    default:
+                      //扫描失败
+                        break;
+                }
+                return;
+            }
+            
+     private ScanDeviceListener scanListener = new  ScanDeviceListener() {
+        @Override
+          public void onGotDeviceByScan(final XDevice xdevice) {
+        //扫描到设备回调方法，每搜索到一个设备都会回调一次
+      }
+    };
 
 **参数：**
 
 | 参数 | 说明 |
 | --- | --- |
 |productid | 设备的产品id|
-|ScanDeviceListener | listener 监听器|
+|ScanDeviceListener | 扫描回调 监听器|
 
 **返回值：**
 
-| 值 | 说明 |
-| --- | --- |
-| = 0 | 调用成功|
-| < 0 | 调用失败,失败code参见 同步错误码|
+XlinkCode 对应常量| 值 | 说明 |
+|---| --- | --- |
+|XlinkCode.SUCEESS| = 0 | 调用成功|
+|XlinkCode.NO_CONNECT_SERVER| -4 | 未开启局域网服务|
+| 其它|< 0 | 调用失败,失败code参见 同步错误码|
 
 **对应回调:**
 
-   	ScanDeviceListener.onGotDeviceByScan(XDevice device)
+   ScanDeviceListener 对象的	public void onGotDeviceByScan(XDevice device)
 在扫描回调中, 可以通过device.getAccessKey()属性判断设备是否已设置设备授权码, 如果没设置,需要设置一下. 后面的用户通过判断是否设置AccessKey以及AccessKey是否一致,来控制是否需要把此设备添加到APP中
 
 
 _ _ _
 
-
+设置设备授权码
 ##### int setDeviceAccessKey(XDevice device, final int accessKey, final SetDeviceAccessKeyListener listener)
 
 **方法说明：**
@@ -824,16 +933,85 @@ _ _ _
 
 **结果回调：**
 
-	SetDeviceAccessKeyListener.onSetLocalDeviceAccessKey(XDevice device, int code, int messageId)
+	SetDeviceAccessKeyListener对象的 
+	public void onSetLocalDeviceAccessKey(XDevice device, int code, int messageId)
 
 
 _ _ _
 
-#####  int connectDevice(XDevice device,final int accessKey, ConnectDeviceListener connectListener)
+#####连接设备  int connectDevice(XDevice device,final int accessKey,int subkey, ConnectDeviceListener connectListener)
 
 **方法说明：**
 
-* 调用该函数用于连接设备，确定设备处于内网还是外网;
+* 调用该函数用于连接设备，确定设备处于内网还是外网，如果设备处于内网，需要连接设备所在的网络，如果设备处于外网，需要确定已经成功连接云端才能进行正常的连接操作
+
+**调用示例**
+
+     int ret = XlinkAgent.getInstance().connectDevice(
+                device.getXDevice(), device.getAccessKey(),device.getXDevice().getSubKey(),
+                connectDeviceListener);
+        if (ret < 0) {// 调用设备失败
+                       switch (ret) {
+                case XlinkCode.INVALID_DEVICE_ID:
+                  //无效的设备ID，请先联网激活设备");
+                    break;
+                case XlinkCode.NO_CONNECT_SERVER:
+                   //连接设备失败，手机未连接服务器");
+                    break;
+                case XlinkCode.NETWORD_UNAVAILABLE:
+            LogUtil.LogXlink("当前网络不可用,无法连接设备");
+                   break;
+                case XlinkCode.NO_DEVICE:
+                    //未找到设备
+                    break;
+                case XlinkCode.ALREADY_EXIST:
+				// 重复调用了连接设备接口
+                    break;
+                default:
+                  //其它错误，参照错误码列表
+                    break;
+            }
+
+        } else {
+            //调用成功
+        }
+        
+        
+    private ConnectDeviceListener connectDeviceListener = new ConnectDeviceListener() {
+
+        @Override
+        public void onConnectDevice(XDevice xDevice, int result) {
+            switch (result) {
+                
+                case XlinkCode.DEVICE_STATE_LOCAL_LINK:
+                   // 连接设备成功 设备处于内网
+                    break;
+                
+                case XlinkCode.DEVICE_STATE_OUTER_LINK:
+                    // 连接设备成功 设备处于云端
+                    break;
+                case XlinkCode.CONNECT_DEVICE_INVALID_KEY:
+                    // 设备授权码错误
+                    break;
+                // 设备不在线
+                case XlinkCode.CONNECT_DEVICE_OFFLINE:
+                   //设备不在线
+                    break;
+                case XlinkCode.CONNECT_DEVICE_TIMEOUT:
+                    // 连接设备超时了，（设备未应答，或者服务器未应答）
+                    break;
+                case XlinkCode.CONNECT_DEVICE_SERVER_ERROR:
+                  //连接设备失败，服务器内部错误");
+                    break;
+                case XlinkCode.CONNECT_DEVICE_OFFLINE_NO_LOGIN:
+                    //连接设备失败，设备未在局域网内，且当前手机只有局域网环境");
+                    break;
+                default:
+                 //连接设备失败，其他错误码
+                    break;
+                  }
+    };
+
 
 **参数：**
 
@@ -841,14 +1019,20 @@ _ _ _
 | --- | --- |
 | XDevice | Device实体兑现 | 
 | accessKey | 设备授权码 | 
+| subKey | 订阅授权码 | 
 | connectListener | 监听器 | 
 
 **返回值：**
 
-| 值 | 说明 |
-| --- | --- |
-| = 0 | 调用成功 |
-| < 0 | 调用失败,失败code参见 同步错误码 |
+|对应的XlinkCode常量| 值 | 说明 |
+| --- | --- |---|
+|`SUCCESS`| = 0 | 调用成功 |
+|`NO_CONNECT_SERVER`| -4  | 手机未连接服务器
+|`NO_DEVICE`| -6  |未找到该设备
+|`ALREADY_EXIST`| -7  |方法重复调用
+|`INVALID_DEVICE_ID`| -9  |无效的设备id
+|`NETWORD_UNAVAILABLE`| -10 |当前网络不可用
+| 其它|< 0 | 调用失败,失败code参见 同步错误码 |
 
 **结果回调：**
 
@@ -862,7 +1046,7 @@ _ _ _
 **方法说明：**
 
 * 设置设备的数据端点
-* **V2版本SDK已废弃数据端点功能**
+* **V2版本SDK已废弃数据端点功能，V3版本SDK添加了以上方法**
 
 **参数：**
 
@@ -886,12 +1070,12 @@ _ _ _
 
 
 
-##### int subscribeDevice(XDevice device, int accessKey, SubscribeDeviceListener listener)
+#####订阅设备 int subscribeDevice(XDevice device, int subKey, SubscribeDeviceListener listener)
 
 **方法说明：**
 
 * 订阅设备(必须有公网环境)(如果在公网环境下使用
-* 公网环境调用 XlinkAgent.getInstance().getconnectDevice()会自动调用该函数;
+* 公网环境调用 XlinkAgent.getInstance().connectDevice()会自动调用该函数;
 * 设备端重置设备密码后，订阅关系会清空
 * 解除订阅关系请调用HTTP接口(/v2/user/{user_id}/unsubscribe) 参考:[http://support.xlink.cn/hc/kb/article/89925/](http://support.xlink.cn/hc/kb/article/89925/)
 
@@ -900,7 +1084,7 @@ _ _ _
 | 参数 | 说明 |
 | --- | --- |
 | DeviceObject | Device实体对象
-| accessKey | 设备授权码
+| subKey | 订阅授权码
 | listener | 监听器
 
 **返回值：**
@@ -912,7 +1096,7 @@ _ _ _
 
 **结果回调：**
 
-	onSubscribeDevice()
+	SubscribeDeviceListener 对象的onSubscribeDevice(XDevice xDevice, int i)
 
 
 _ _ _
@@ -923,6 +1107,53 @@ _ _ _
 
 * 向设备发送pipe数据包.
 
+**调用示例**
+    
+    int ret=XlinkAgent.getInstance().sendPipeData(device,data, listener);
+           if (ret < 0) {
+                    switch (ret) {
+                      case XlinkCode.NO_CONNECT_SERVER:
+                          //发送数据失败，手机未连接服务器                                                   
+                          break;
+                      case XlinkCode.NETWORD_UNAVAILABLE:
+                           //当前网络不可用,发送数据失败");
+                           break;
+                        case XlinkCode.NO_DEVICE:
+                           //未找到设备");
+                       break;
+                        default:
+                          //发送数据失败，错误码：" + ret);
+                            break;
+                    }
+                   
+                } else {
+                   //发送数据调用成功
+                }
+                
+     public SendPipeCallbackListener pipeListener = new SendPipeCallbackListener() {
+
+        @Override
+        public void onSendLocalPipeData(XDevice device, int code, int messageId) {
+            switch (code) {
+                case XlinkCode.SUCCEED:
+                //发送数据成功
+                    break;
+                case XlinkCode.TIMEOUT:
+                  //发送数据超时
+                    break;
+                case XlinkCode.SERVER_CODE_UNAUTHORIZED:
+                //控制设备失败,当前帐号未订阅此设备，请重新订阅
+                    break;
+                case XlinkCode.SERVER_DEVICE_OFFLIEN:
+                  //设备不在线
+                     break;
+                default:
+                    //控制设备其他错误码
+                    break;
+            }
+        }
+    };
+
 **参数：**
 
 | 参数 | 说明 |
@@ -932,10 +1163,13 @@ _ _ _
 
 **返回值：**
 
-| 值 | 说明 |
-| --- | --- |
-| = 0 | 调用成功；
-| < 0 | app本地错误;详情参见同步错误码;
+|对应的XlinkCode常量| 值 | 说明 |
+| --- | --- |----|
+|`SUCCEED`|  0 | 调用成功；
+|`NO_CONNECT_SERVER`| -4 |未连接服务器
+| `NETWORD_UNAVAILABLE`|-10|当前网络不可用
+| `NO_DEVICE`|-6 |未找到设备
+| 其它| < 0 | app本地错误;详情参见同步错误码;
 
 
 **结果回调：**
@@ -954,8 +1188,8 @@ _ _ _
 
 XlinkCode常量 | int实际值 | 说明
 ---- | ---- | ----
-SUCCEED|0|成功
-LOCAL_CONNECT_ERROR|-1	|绑定端口失败
+`SUCCEED`|0|成功
+`LOCAL_CONNECT_ERROR`|-1	|绑定端口失败
 ...|...|...
 
 ##### onLogin(int code)
@@ -968,14 +1202,14 @@ LOCAL_CONNECT_ERROR|-1	|绑定端口失败
 
 XlinkCode 常量|int实际值|说明|
 ---- | ---- | ---- |
-SUCCEED|0|登录服务器成功|
-CLOUD_CONNECT_ERROR|-1|连接公网服务器失败（解析域名失败/无网络连接/网络响应超时）
-CLOUD_CONNECT_NO_NETWORK|-2|无物理网络连接
-TIMEOUT|-100|登录服务器超时（原因：手机网络不稳定)
-SERVER_CODE_INVALID_PARAM|1|参数错误（sdk内部错误）
-SERVER_CODE_INVALID_KEY|2|app key不正确
-SERVER_CODE_UNAVAILABLE_ID|3|非法的 appid
-SERVER_CODE_SERVER_ERROR|4|服务器内部错误
+`SUCCEED`|0|登录服务器成功|
+`CLOUD_CONNECT_ERROR`|-1|连接公网服务器失败（解析域名失败/无网络连接/网络响应超时）
+`CLOUD_CONNECT_NO_NETWORK`|-2|无物理网络连接
+`TIMEOUT`|-100|登录服务器超时（原因：手机网络不稳定)
+`SERVER_CODE_INVALID_PARAM`|1|参数错误（sdk内部错误）
+`SERVER_CODE_INVALID_KEY`|2|app key不正确
+`SERVER_CODE_UNAVAILABLE_ID`|3|非法的 appid
+`SERVER_CODE_SERVER_ERROR`|4|服务器内部错误
 ... | ...	| ...
 
 ##### onDisconnect(int code)
@@ -1041,7 +1275,7 @@ SERVER_CODE_SERVER_ERROR|4|服务器内部错误
 **方法说明：**
 
 * 设备数据节点发生改变，会回调此方法
-* **V2版本SDK已废弃数据端点功能**
+* **V2版本SDK已废弃数据端点功能，V3版本SDK添加了以上方法**
 
 **参数 :**
 
@@ -1053,11 +1287,12 @@ SERVER_CODE_SERVER_ERROR|4|服务器内部错误
 
 type 定义|具体int值|说明
 ---- | ---- | ----
-POINT_TYPE_BOOLEAN|1|布尔值
-POINT_TYPE_BYTE|2|byte单字节
-POINT_TYPE_SHORT|3|int16 (short)
-POINT_TYPE_INT|4|int32 (int)
-POINT_TYPE_STRING|5|string
+DP_TYPE_BOOL|1|布尔值
+DP_TYPE_BYTE|2|byte单字节
+DP_TYPE_SHORT|3|int16 (short)
+DP_TYPE_INT|4|int32 (int)
+DP_TYPE_FLOAT|5|float
+DP_TYPE_STRING|6|string
 
 
 ##### onDeviceStateChanged(XDevice xdevice, int state);
@@ -1218,7 +1453,7 @@ device | 设备实体
 
 > 扫描结果通过onGotDeviceByScan异步返回。
 
-##### 5. 通过本地通讯设置设备授权码(v2版本使用)
+##### 5. 通过本地通讯设置设备授权码
 
 **函数：**
 
@@ -1304,7 +1539,39 @@ device | 设备实体
 
 > 设置结果通过onSetDeviceAuthorizeCode返回
 
-##### 7. 连接一个设备
+##### 7. 手动订阅设备
+
+**函数：**
+
+```
+-(int)subscribeDevice:(DeviceEntity *)device andAuthKey:(NSNumber *)authKey andFlag:(int8_t)flag;
+```
+**说明：**
+
+* 用于订阅设备，订阅后能从云端连接设别；
+
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+| device | 设备实体;
+| authKey | 设备授权码;
+| flag | 1为订阅设设备;
+
+**返回值：**
+
+| 值 | 说明 |
+| --- | --- |
+| 0 | 成功; |
+| 其它 | 失败; |
+
+> 订阅结果通过onSubscription回调返回。
+
+**备注：**
+	
+	订阅设备需要手机与设备处于同一wifi网络
+	
+##### 8. 连接一个设备
 
 **函数：**
 
@@ -1318,19 +1585,27 @@ device | 设备实体
 
 **参数：**
 
-	device设备实体;
-	authKey设备授权码;
+| 参数 | 说明 |
+| --- | --- |
+| device | 设备实体;
+| authKey | 设备授权码;
 
 **返回值：**
 
-	0成功;
-	其他失败;
+| 值 | 说明 |
+| --- | --- |
+| 0 | 成功; |
+| 其它 | 失败; |
+
+> 连接结果通过onConnectDevice回调返回。
+> 连接设备的实时状态变化会触发onDeviceStatusChanged回调
 
 **备注：**
 
 	连接结果通过onConnectDevice回调
+	通过外网连接设备前需要订阅设备，sdk内部会自动订阅设备，但需要手机与设备在同一网络
 
-##### 8.发送本地透传数据
+##### 9.发送本地透传数据
 
 **函数：**
 
@@ -1358,7 +1633,7 @@ payload | 数据值，二进制的。
 
 > 其发送结果通过onSendLocalPipeData回调返回。
 
-##### 9. 通过云端发送透传数据
+##### 10. 通过云端发送透传数据
 
 **函数：**
 
@@ -1385,7 +1660,7 @@ payload | 数据值，二进制的
 
 > 其发送结果通过onSendLocalPipeData回调返回。
 
-##### 10. 探测云端设备状态
+##### 11. 探测云端设备状态
 
 **函数：**
 
@@ -1411,7 +1686,59 @@ device ｜ 设备实体
 其他 | 失败
 >探测结果异步通过onDeviceProbe回调
 
-##### 11. 获取SDK中所有设备列表
+##### 12. 本地设置数据端点
+
+**函数：**
+
+```
+-(unsigned short)setLocalDataPoints:(NSArray<DataPointEntity *> *)dataPoints withDevice:(DeviceEntity *)device
+```
+
+**说明：**
+
+* 本地设置数据端点
+
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+dataPoints ｜ 数据端点列表
+device ｜ 设备实体
+
+**返回值：**
+
+| 值 | 说明 |
+| --- | --- |
+msgID（非0） | 成功
+0 | 失败
+
+##### 13. 云端设置数据端点
+
+**函数：**
+
+```
+-(unsigned short)setCloudDataPoints:(NSArray<DataPointEntity *> *)dataPoints withDevice:(DeviceEntity *)device
+```
+
+**说明：**
+
+* 云端设置数据端点
+
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+dataPoints ｜ 数据端点列表
+device ｜ 设备实体
+
+**返回值：**
+
+| 值 | 说明 |
+| --- | --- |
+msgID（非0） | 成功
+0 | 失败
+
+##### 14. 获取SDK中所有设备列表
 
 **函数：**
 
@@ -1433,7 +1760,7 @@ device ｜ 设备实体
 | --- | --- |
 NSArray | DeviceEntity * 实体的队列
 
-##### 12. 释放SDK
+##### 15. 释放SDK
 
 **函数：**
 
@@ -1724,26 +2051,45 @@ device | 设备实体
 | --- | --- |
 | device | 设备实体|
 
-##### 14. onDataPointUpdata
+##### 14. onLocalDataPoint2Update
 
 **函数：**
 
 ```
--(void)onDataPointUpdata:(DeviceEntity*)device withIndex:(int)index withDataBuff:(NSData*)dataBuff
+-(void)onLocalDataPoint2Update:(DeviceEntity *)device withDataPoints:(NSArray *)dataPoints;
 ```
 
 **说明：**
 
-* 数据端点数据回调;
-* **V2版本SDK已废弃数据端点功能**
+* 本地数据端点数据回调;
+* **适用于v3版本**
 
 **参数：**
 | 参数 | 说明 |
 | --- | --- |
 | device | 设备实体
-| index | 端点索引
-| dataBuff | 索引值
-| channel | 通道：云端还是本地
+| dataPoints | 端点索引列表
+
+> 纯透传APP，该功能用不到；
+
+##### 15. onCloudDataPoint2Update
+
+**函数：**
+
+```
+-(void)onCloudDataPoint2Update:(DeviceEntity *)device withDataPoints:(NSArray *)dataPoints
+```
+
+**说明：**
+
+* 云端数据端点数据回调;
+* **适用于v3版本**
+
+**参数：**
+| 参数 | 说明 |
+| --- | --- |
+| device | 设备实体
+| dataPoints | 端点索引列表
 
 > 纯透传APP，该功能用不到；
 
@@ -1800,6 +2146,14 @@ A：请检查设备与APP是否同一局域网；并且设备未设置AccessKey�
 - Q：设备不能订阅
 A: 设备需要在线并且连接上云端才能订阅
 
+- Q：设备在回调onRecvPipeData和onRecvPipeSyncData时候出现其它设备的数据推送过来
+A: 需要通过方法的XDevice进行判断具体是哪个设备的数据，然后再进行数据匹配或者过滤
+
+- Q：如何实现数据推送
+A: 在云端配置或者设备实现通过云端推送数据需要实现XlinkNetListener 的onEventNotify回调方法进行处理 
+
+- Q：启动调用连接和控制设备调用失败
+A: 查看是否已经调用login方法，并SDK进行了OnLogin的成功回调
 ### 3.4 附录
 
 **设备和用户的关系:**
@@ -1871,6 +2225,34 @@ INVALID_PARAM|-8|参数有误（参数为空/密码长度太长/等等...）|所
 INVALID_DEVICE_ID|-9|无效的设备ID|所有带XDevice参数的函数
 NETWORD_UNAVAILABLE|-10	|网络不可用|所有有联网操作的方法
 INVALID_POINT|-11|非法的数据端点（1.该设备数据端点索引越界；2.value类型不匹配； 3.未添加正确的数据模版；|setDataPoint()
+TIMEOUT|-100|发送数据或者连接超时|sendPipeData() 回调SendPipeCallbackListener
+SERVER_DISCONNECT|-101|发送数据时连接中断|sendPipeData() 回调SendPipeCallbackListener
+CONNECT_DEVICE_INVALID_KEY|102|设备密码错误|connectDevice()回调
+CONNECT_DEVICE_SERVER_ERROR|104|连接设备失败，服务器内部错误|connectDevice(）回调
+CONNECT_DEVICE_NO_ACTIVATE|109|连接设备，设备在xlink服务器未激活，未找到设备id.|connectDevice()回调
+CONNECT_DEVICE_OFFLINE|110|连接设备失败，设备不在线|connectDevice()回调
+CONNECT_DEVICE_OFFLINE_NO_LOGIN|111|连接设备失败，设备在局域网未找到，并且本身网络只有局域网环境，无法在公网判断设备在不在线|connectDevice()回调
+CONNECT_DEVICE_TIMEOUT|200|设备连接超时|connectDevice()回调
+SERVER_CODE_INVALID_PARAM|1|设备或者服务器返回无效参数（SDK内部错误）|所有与设备和与服务器相关的操作
+SERVER_CODE_INVALID_KEY|2|非法访问无效的密码(密码不正确,)|
+SERVER_CODE_UNAVAILABLE_ID|3|设备ID错误，非法的设备ID|与设备相关的操作
+SERVER_CODE_SERVER_ERROR|4|服务器内部错误|与服务器相关的操作
+SERVER_CODE_UNAUTHORIZED|5|设备未授权，由于订阅关系不正确引起 ，该app id未订阅成功该设备|connetDevice()和sendPipeData()方法的回调
+SERVER_DEVICE_OFFLIEN|10|服务器返回状态码，设备不在线|connetDevice()和sendPipeData()方法的回调
+CLOUD_STATE_DISCONNECT|-1|公网断开，socket关闭了连接|与设备相关的操作
+CLOUD_KEEPALIVE_ERROR|-2|公网断开，网络问题导致心跳超时|与设备相关的操作
+CLOUD_SERVICE_KILL|-3|Service被异常停止而导致云端网络断开，且不会重启；如果还想使用云端网络（需要成功调用login接口）|与设备相关的操作
+CLOUD_USER_EXTRUSION|3|设备在其它地方登陆|onDisconnect()回调
+CLOUD_CONNECT_ERROR|-1|连接公网服务器失败/解析域名失败|login()方法
+CLOUD_CONNECT_NO_NETWORK|-2|连接公网服务器/无网络连接|login()方法
+LOCAL_THREAD_ERROR|-1|本地网络异常|本地网络相关的操作
+LOCAL_SERVICE_KILL|-2|Service被异常停止而导致本地网络断开，且不会重启；如果还想使用本地网络（需要成功调用start接口）|login()方法
+LOCAL_CONNECT_ERROR|-1|本地端口绑定失败|
+DEVICE_STATE_OFFLIEN|-1|设备不在线|XDevice 的getDevcieConnectStates()方法
+DEVICE_STATE_LOCAL_LINK|0|设备局域网在线|XDevice 的getDevcieConnectStates()方法
+DEVICE_STATE_OUTER_LINK|1|设备云端在线|XDevice 的getDevcieConnectStates()方法
+CHANGED_UPDATAPOINT_LOCAL|0|内网通道的更新数据端点包channel类型|onDataPointUpdate(XDevice,List<DataPoint> datapoints, int channel)
+CHANGED_UPDATAPOINT_CLOUD|1|云端网络通道的更新数据端点包channel类型|onDataPointUpdate(XDevice,List<DataPoint> datapoints, int channel)
 ...	| ... | ... | ...
 
 ## 四、设备分享
