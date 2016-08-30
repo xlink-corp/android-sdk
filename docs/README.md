@@ -215,6 +215,16 @@
 	XlinkAgent.getInstance().addXlinkListener(this);
 	//可以在该监听器中直接更新UI
 	```
+	
+6.目前SDK连接是TCP与UDP(即内网和外网)同时进行连接，若需要SDK优先进行内网连接，可在SDK调用init方法之后添加，调用示例如下：
+
+**Android 代码范例**
+          
+          XlinkAgent.getInstance().setPreInnerServiceMode(true);
+          
+          调用该方法后，sdk会优先进行内网连接，连接失败或者超时再尝试进行外网连接 
+          
+            
 
 **IOS**
 
@@ -543,7 +553,7 @@ SDK
               //发送数据成功
         }
 	```
-	
+
 	```
    //发送成功后再收到设备相应时回回调
     private SendPipeListener pipeListener = new SendPipeListener() {
@@ -694,12 +704,33 @@ _ _ _
 
 >详情请参见XlinkNetListener 说明
 
+
+_ _ _
+
+##### void setPreInnerServiceMode(boolean pre)
+
+**方法说明：**
+* 向SDK设置优先进行内网连接,默认不使用优先内网连接
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+| pre | 是否优先内网连接|
+  
+**调用示例：**
+
+    XlinkAgent.getInstance().setPreInnerServiceMode(true);
+
+**返回值：**
+
+   无返回值
 _ _ _
 
 ##### boolean initDevice(XDevice device)
 
 **方法说明：**
 
+* 如果 设备不是通过扫描获取，而是通过http接口或者，那么连接设备前需要调用该方法进行本地初始化设备
 * 向SDK中初始化设备节点
 * APP可以缓存设备节点，在下次程序启动后，可以自行初始化设备节点到SDK，用于跳过Scan步骤。
 * SDK把设备节点放入内部队列，用于设备的定位和回调时的参数。
@@ -725,6 +756,30 @@ _ _ _
 
 _ _ _
 
+##### void setSSL(String KeystorepathTrust, String password)
+
+**方法说明：**
+
+* 设置SSL的安全证书的的秘钥库和密码
+* 如果连接中使用到SSL,那么需要提供对应的秘钥进行验证，默认是放在assets下面，如果需要主动设置SSL秘钥文件名称及密码，则可以调用该方法进行设置
+
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+| KeystorepathTrust | 秘钥名|
+| password | 秘钥密码|
+
+**调用示例：**
+
+    XlinkAgent.setSSL("xlink_tclient.bks","123456");
+
+**返回值：**
+
+   无返回值
+
+
+_ _ _
 
 ##### XDevice JsonToDevice(JSONObject jsonObject)
 
@@ -939,7 +994,50 @@ _ _ _
 
 _ _ _
 
-#####连接设备  int connectDevice(XDevice device,final int accessKey,int subkey, ConnectDeviceListener connectListener)
+获取设备的subscribeKey
+##### int getDeviceSubscribeKey(XDevice device, final int accessKey, final GetSubscribeKeyListener listener)
+
+**方法说明：**
+
+* 该方法用于获取设备的subscribeKey,V3版本订阅设备和连接设备需要传入subScribeKey，而subscribeKey则是通过使用accessKey调用此方法获取
+
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+| XDevice | Device实体对象
+| accessKey | 设备密码(授权码) 支持9位数字
+| listener | 监听器
+
+**返回值：**
+
+| 值 | 说明 |
+| --- | --- |
+| = 0 | 调用成功 |
+| < 0 | 调用失败,失败code参见 同步错误码 |
+
+**结果回调：**
+
+	GetSubscribeKeyListener对象的 
+	public void onGetSubscribekey(XDevice xdevice, int code, int subKey)
+
+**调用示例**
+
+	 if (device.getXDevice().getVersion() >= 3 && device.getXDevice().getSubKey() <= 0) {
+            Log("get subkey:" + device.getXDevice().getMacAddress() + " " + device.getXDevice().getSubKey());
+            XlinkAgent.getInstance().getInstance().getDeviceSubscribeKey(device.getXDevice(), device.getXDevice().getAccessKey(), new GetSubscribeKeyListener() {
+                @Override
+                public void onGetSubscribekey(XDevice xdevice, int code, int subKey) {
+                    device.getXDevice().setSubKey(subKey);
+                    DeviceManage.getInstance().updateDevice(device);
+                }
+            });
+        }
+
+
+_ _ _
+
+#####  int connectDevice(XDevice device,final int accessKey,int subkey, ConnectDeviceListener connectListener)
 
 **方法说明：**
 
@@ -1019,7 +1117,7 @@ _ _ _
 | --- | --- |
 | XDevice | Device实体兑现 | 
 | accessKey | 设备授权码 | 
-| subKey | 订阅授权码 | 
+| subKey | 订阅授权码 ，可以在内网通过getSubscribeKey（）方法获取| 
 | connectListener | 监听器 | 
 
 **返回值：**
@@ -1040,7 +1138,108 @@ _ _ _
 
 _ _ _
 
+连接设备
+#####  connectDevice(XDevice device, final String auth, final ConnectDeviceListener connectListener)
+**方法说明：**
 
+* V3版本该方法已经废弃，使用int connectDevice(XDevice, int, int, ConnectDeviceListener）替代
+* 调用该函数用于连接设备，确定设备处于内网还是外网，如果设备处于内网，需要连接设备所在的网络，如果设备处于外网，需要确定已经成功连接云端才能进行正常的连接操作
+
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+| XDevice | Device实体兑现 | 
+| auth | 设备授权码 | 
+| connectListener | 监听器 | 
+
+**返回值：**
+
+|对应的XlinkCode常量| 值 | 说明 |
+| --- | --- |---|
+|`SUCCESS`| = 0 | 调用成功 |
+|`NO_CONNECT_SERVER`| -4  | 手机未连接服务器
+|`NO_DEVICE`| -6  |未找到该设备
+|`ALREADY_EXIST`| -7  |方法重复调用
+|`INVALID_DEVICE_ID`| -9  |无效的设备id
+|`NETWORD_UNAVAILABLE`| -10 |当前网络不可用
+| 其它|< 0 | 调用失败,失败code参见 同步错误码 |
+
+**结果回调：**
+
+    ConnectDeviceListener.onConnectDevice(XDevice xDeivce, int ret)
+
+
+- - -
+
+连接设备
+#####  connectDevice(XDevice device, final int accessKey, final ConnectDeviceListener connectListener)
+**方法说明：**
+
+* V3版本该方法已经废弃，使用int connectDevice(XDevice, int, int, ConnectDeviceListener）替代
+* 调用该函数用于连接设备，确定设备处于内网还是外网，如果设备处于内网，需要连接设备所在的网络，如果设备处于外网，需要确定已经成功连接云端才能进行正常的连接操作
+
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+| XDevice | Device实体兑现 | 
+| accessKey | 设备授权码 | 
+| connectListener | 监听器 | 
+
+**返回值：**
+
+|对应的XlinkCode常量| 值 | 说明 |
+| --- | --- |---|
+|`SUCCESS`| = 0 | 调用成功 |
+|`NO_CONNECT_SERVER`| -4  | 手机未连接服务器
+|`NO_DEVICE`| -6  |未找到该设备
+|`ALREADY_EXIST`| -7  |方法重复调用
+|`INVALID_DEVICE_ID`| -9  |无效的设备id
+|`NETWORD_UNAVAILABLE`| -10 |当前网络不可用
+| 其它|< 0 | 调用失败,失败code参见 同步错误码 |
+
+**结果回调：**
+
+    ConnectDeviceListener.onConnectDevice(XDevice xDeivce, int ret)
+
+
+
+- - -
+
+连接设备
+#####int connectDevice(XDevice device, ConnectDeviceListener connectListener)
+**方法说明：**
+
+* 调用该函数用于连接设备，确定设备处于内网还是外网，如果设备处于内网，需要连接设备所在的网络，如果设备处于外网，需要确定已经成功连接云端才能进行正常的连接操作
+* 该方法需要device中字段accessKey和subKey存在才能直接调用，否则会调用失败
+
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+| XDevice | Device实体兑现 | 
+| connectListener | 监听器 | 
+
+**返回值：**
+
+|对应的XlinkCode常量| 值 | 说明 |
+| --- | --- |---|
+|`SUCCESS`| = 0 | 调用成功 |
+|`NO_CONNECT_SERVER`| -4  | 手机未连接服务器
+|`NO_DEVICE`| -6  |未找到该设备
+|`ALREADY_EXIST`| -7  |方法重复调用
+|`INVALID_DEVICE_ID`| -9  |无效的设备id
+|`NETWORD_UNAVAILABLE`| -10 |当前网络不可用
+| 其它|< 0 | 调用失败,失败code参见 同步错误码 |
+
+**结果回调：**
+
+    ConnectDeviceListener.onConnectDevice(XDevice xDeivce, int ret)
+
+- - -
+
+设置数据端点
 ##### int setDataPoint(XDevice xdevice, List< DataPiont > dataPionts,SetDataPointListener listener)
 
 **方法说明：**
@@ -1101,6 +1300,239 @@ _ _ _
 
 _ _ _
 
+
+#####订阅设备 int subscribeDevice(XDevice device, String authCode, SubscribeDeviceListener listener)
+
+**方法说明：**
+
+* **V3版本SDK已废弃数据端点功能，V3版本SDK添加了以上方法**
+* 订阅设备(必须有公网环境)(如果在公网环境下使用
+* 公网环境调用 XlinkAgent.getInstance().connectDevice()会自动调用该函数;
+* 设备端重置设备密码后，订阅关系会清空
+* 解除订阅关系请调用HTTP接口(/v2/user/{user_id}/unsubscribe) 参考:[http://support.xlink.cn/hc/kb/article/89925/](http://support.xlink.cn/hc/kb/article/89925/)
+
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+| device | Device实体对象
+| authCode | 订阅授权码
+| listener | 监听器
+
+**返回值：**
+
+| 值 | 说明 |
+| --- | --- |
+| = 0 | 调用成功；
+| < 0 | app本地错误;详情参见同步错误码;
+
+**结果回调：**
+
+	SubscribeDeviceListener 对象的onSubscribeDevice(XDevice xDevice, int code)
+
+
+_ _ _
+
+
+
+#####取消订阅设备 int unsubscribeDevice(XDevice device, String authCode, SubscribeDeviceListener listener)
+
+**方法说明：**
+
+* **V3版本SDK已废弃数据端点功能，V3版本SDK添加了以上方法**
+* **V3版本建议使用http接口进行设备的取消订阅操作,接口如下**
+* 订阅设备(必须有公网环境)(如果在公网环境下使用
+* 公网环境调用 XlinkAgent.getInstance().connectDevice()会自动调用该函数;
+* 设备端重置设备密码后，订阅关系会清空
+* 解除订阅关系请调用HTTP接口(/v2/user/{user_id}/unsubscribe) 参考:[http://support.xlink.cn/hc/kb/article/89925/](http://support.xlink.cn/hc/kb/article/89925/)
+
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+| device | Device实体对象
+| authCode | 订阅授权码
+| listener | 监听器
+
+**返回值：**
+
+| 值 | 说明 |
+| --- | --- |
+| = 0 | 调用成功；
+| < 0 | app本地错误;详情参见同步错误码;
+
+**结果回调：**
+
+	SubscribeDeviceListener 对象的onSubscribeDevice(XDevice xDevice, int code)
+
+
+_ _ _
+
+#####取消订阅设备 int unsubscribeDevice(XDevice device, int accessKey, SubscribeDeviceListener listener)
+
+**方法说明：**
+
+* **V3版本SDK已废弃数据端点功能，V3版本SDK添加了以上方法**
+* **V3版本建议使用http接口进行设备的取消订阅操作,接口如下**
+* 订阅设备(必须有公网环境)(如果在公网环境下使用
+* 公网环境调用 XlinkAgent.getInstance().connectDevice()会自动调用该函数;
+* 设备端重置设备密码后，订阅关系会清空
+* 解除订阅关系请调用HTTP接口(/v2/user/{user_id}/unsubscribe) 参考:[http://support.xlink.cn/hc/kb/article/89925/](http://support.xlink.cn/hc/kb/article/89925/)
+
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+| device | Device实体对象
+| accessKey | 订阅授权码
+| listener | 监听器
+
+**返回值：**
+
+| 值 | 说明 |
+| --- | --- |
+| = 0 | 调用成功；
+| < 0 | app本地错误;详情参见同步错误码;
+
+**结果回调：**
+
+	SubscribeDeviceListener 对象的onSubscribeDevice(XDevice xDevice, int code)
+
+_ _ _
+
+#####修改本地accessKey int setLocalDeviceAccessKey(XDevice device, int accessKey, SetDeviceAccessKeyListener listener)
+
+**方法说明：**
+
+* 修改设备本地授权码调用该方法
+
+
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+| device | Device实体对象
+| accessKey | 授权码
+| listener | 监听器
+
+**返回值：**
+
+| 值 | 说明 |
+| --- | --- |
+| = 0 | 调用成功；
+| < 0 | app本地错误;详情参见同步错误码;
+
+**结果回调：**
+
+	SetDeviceAccessKeyListener 对象的onSetLocalDeviceAccessKey(XDevice device, int code, int messageId)
+
+_ _ _
+
+探测设备是否在线
+####int sendProbe(XDevice device)
+
+**方法说明：**
+
+* 发送设备探测数据
+* 如果调用成功，外网会推送数据节点，内网会接收到设备状态
+
+
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+| device | Device实体对象
+
+**返回值：**
+
+| 值 | 说明 |
+| --- | --- |
+| = 0 | 调用成功；
+| < 0 | app本地错误;详情参见同步错误码;
+
+_ _ _
+
+
+#####本地发送数据透传 （非云端，局域网直连设备） int sendLocalPipeData(XDevice device, byte flag, byte[] data, int timeOut, SendPipeListener listener)
+
+**方法说明：**
+
+* 发送本地透传数据，在局域网内直接发送
+
+
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+| device | Device实体对象
+| flag | 消息类型
+| data | 字节数组数据
+| timeOut | 超时时间
+
+**返回值：**
+
+| 值 | 说明 |
+| --- | --- |
+| = 0 | 调用成功；
+| < 0 | app本地错误;详情参见同步错误码;
+
+**结果回调：**
+
+	SendPipeCallbackListener 对象的void onSendLocalPipeData(XDevice device, int code, int messageId)
+
+_ _ _
+
+####本地列表移除设备  int removeDevice(XDevice xDevice)
+
+**方法说明：**
+
+* 清除在sdk 列表中的某个设备
+
+| 参数  | 说明 |
+| --- | --- |
+| xDevice | 设备对象
+
+**返回值：**
+
+| 值 | 说明 |
+| --- | --- |
+| = 0 | 调用成功；
+| - 8 （XlinkCode.INVALID_PARAM）| 设备不存在
+
+- - -
+
+####本地列表移除设备  int removeDevice(String mac)
+
+**方法说明：**
+
+* 清除在sdk 列表中的某个设备
+
+| 参数  | 说明 |
+| --- | --- |
+| mac | 设备mac地址
+
+**返回值：**
+
+| 值 | 说明 |
+| --- | --- |
+| = 0 | 调用成功；
+| - 8 （XlinkCode.INVALID_PARAM）| 设备不存在
+
+- - -
+
+####本地列表移除所有设备  int removeAllDevice()
+
+**方法说明：**
+
+* 清除在sdk 列表中的所有设备
+
+**返回值：**
+
+ 无返回值
+
+- - -
+
+向设备发送透传数据
 ##### int sendPipeData(XDevice device, byte[] data, SendPipeListener listener)
 
 **方法说明：**
@@ -1160,6 +1592,40 @@ _ _ _
 | --- | --- |
 | DeviceObject | Device实体对象
 | byte[] | Pipe数据
+
+**返回值：**
+
+|对应的XlinkCode常量| 值 | 说明 |
+| --- | --- |----|
+|`SUCCEED`|  0 | 调用成功；
+|`NO_CONNECT_SERVER`| -4 |未连接服务器
+| `NETWORD_UNAVAILABLE`|-10|当前网络不可用
+| `NO_DEVICE`|-6 |未找到设备
+| 其它| < 0 | app本地错误;详情参见同步错误码;
+
+
+**结果回调：**
+
+	onSendPipeData
+	
+	
+	- - -
+
+##### int sendPipeData(XDevice device, byte[] data, int timeOut,SendPipeListener listener)
+
+**方法说明：**
+
+* 向设备发送pipe数据包,使用方法如上
+
+
+**参数：**
+
+| 参数 | 说明 |
+| --- | --- |
+| device | Device实体对象
+| byte[] | Pipe数据
+| timeOut |超时时间，单位秒
+|listener |发送回调
 
 **返回值：**
 
@@ -1293,6 +1759,7 @@ DP_TYPE_SHORT|3|int16 (short)
 DP_TYPE_INT|4|int32 (int)
 DP_TYPE_FLOAT|5|float
 DP_TYPE_STRING|6|string
+DP_TYPE_BYTEARRAY|7|byte[]字节数组
 
 
 ##### onDeviceStateChanged(XDevice xdevice, int state);
@@ -1539,39 +2006,7 @@ device | 设备实体
 
 > 设置结果通过onSetDeviceAuthorizeCode返回
 
-##### 7. 手动订阅设备
-
-**函数：**
-
-```
--(int)subscribeDevice:(DeviceEntity *)device andAuthKey:(NSNumber *)authKey andFlag:(int8_t)flag;
-```
-**说明：**
-
-* 用于订阅设备，订阅后能从云端连接设别；
-
-**参数：**
-
-| 参数 | 说明 |
-| --- | --- |
-| device | 设备实体;
-| authKey | 设备授权码;
-| flag | 1为订阅设设备;
-
-**返回值：**
-
-| 值 | 说明 |
-| --- | --- |
-| 0 | 成功; |
-| 其它 | 失败; |
-
-> 订阅结果通过onSubscription回调返回。
-
-**备注：**
-	
-	订阅设备需要手机与设备处于同一wifi网络
-	
-##### 8. 连接一个设备
+##### 7. 连接一个设备
 
 **函数：**
 
@@ -1585,27 +2020,19 @@ device | 设备实体
 
 **参数：**
 
-| 参数 | 说明 |
-| --- | --- |
-| device | 设备实体;
-| authKey | 设备授权码;
+	device设备实体;
+	authKey设备授权码;
 
 **返回值：**
 
-| 值 | 说明 |
-| --- | --- |
-| 0 | 成功; |
-| 其它 | 失败; |
-
-> 连接结果通过onConnectDevice回调返回。
-> 连接设备的实时状态变化会触发onDeviceStatusChanged回调
+	0成功;
+	其他失败;
 
 **备注：**
 
 	连接结果通过onConnectDevice回调
-	通过外网连接设备前需要订阅设备，sdk内部会自动订阅设备，但需要手机与设备在同一网络
 
-##### 9.发送本地透传数据
+##### 8.发送本地透传数据
 
 **函数：**
 
@@ -1633,7 +2060,7 @@ payload | 数据值，二进制的。
 
 > 其发送结果通过onSendLocalPipeData回调返回。
 
-##### 10. 通过云端发送透传数据
+##### 9. 通过云端发送透传数据
 
 **函数：**
 
@@ -1660,7 +2087,7 @@ payload | 数据值，二进制的
 
 > 其发送结果通过onSendLocalPipeData回调返回。
 
-##### 11. 探测云端设备状态
+##### 10. 探测云端设备状态
 
 **函数：**
 
@@ -1686,7 +2113,7 @@ device ｜ 设备实体
 其他 | 失败
 >探测结果异步通过onDeviceProbe回调
 
-##### 12. 本地设置数据端点
+##### 11. 本地设置数据端点
 
 **函数：**
 
@@ -1712,7 +2139,7 @@ device ｜ 设备实体
 msgID（非0） | 成功
 0 | 失败
 
-##### 13. 云端设置数据端点
+##### 12. 云端设置数据端点
 
 **函数：**
 
@@ -1738,7 +2165,7 @@ device ｜ 设备实体
 msgID（非0） | 成功
 0 | 失败
 
-##### 14. 获取SDK中所有设备列表
+##### 13. 获取SDK中所有设备列表
 
 **函数：**
 
@@ -1760,7 +2187,7 @@ msgID（非0） | 成功
 | --- | --- |
 NSArray | DeviceEntity * 实体的队列
 
-##### 15. 释放SDK
+##### 14. 释放SDK
 
 **函数：**
 
