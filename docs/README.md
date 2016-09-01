@@ -15,10 +15,14 @@
     - [Setp6 连接设备](#setp6)
     - [Setp7 设备控制 & 接收设备数据](#setp7)
 - [三、API文档](#api)
-	- [3.1 概述](#3.1 概述)
-	- [3.2 接口介绍](#3.2 接口介绍)
-	- [3.3 常见问题](#3.3 常见问题)
-	- [3.4 附录](#3.4 附录)
+	- [3.1 概述](#step3.1)
+	- [3.2 接口介绍](#step3.2)
+	   -     [3.2.1 设备信息类XDevice介绍](#step3.2.1)    
+	   -    [3.2.2 Android SDK功能函数](#step3.2.2)
+      -    [3.2.3 Android 设备操作函数](#step3.2.3)
+      -    [3.2.4 XlinkNetListener 回调说明](#step3.2.4)
+	- [3.3 常见问题](#step3.3)
+	- [3.4 附录](#step3.4)
 - [四、设备分享](#四、设备分享)
 	- [4.1、功能描述](#4.1、功能描述)
 	- [4.2、分享流程](#4.2、分享流程)
@@ -553,7 +557,7 @@ SDK
               //发送数据成功
         }
 	```
-
+	
 	```
    //发送成功后再收到设备相应时回回调
     private SendPipeListener pipeListener = new SendPipeListener() {
@@ -605,25 +609,61 @@ SDK
 ##三、<a name="api">API文档</a>
 
 
-- [3.1 概述](#3.1 概述)
-- [3.2 接口介绍](#3.2 接口介绍)
-- [3.3 常见问题](#3.3 常见问题)
-- [3.4 附录](#3.4 附录)
+- [3.1 概述](#step3.1)
+- [3.2 接口介绍](#step3.2)
+   -    [3.2.1 设备信息类XDevice介绍](#step3.2.1)
+   -    [3.2.2 Android SDK功能函数](#step3.2.2)
+   -    [3.2.3 Android 设备操作函数](#step3.2.3)
+   -    [3.2.4 XlinkNetListener 回调说明](#step3.2.4)
+- [3.3 常见问题](#step3.3)
+- [3.4 附录](#step3.4)
 
 
-### 3.1 概述
+### <a name="step3.1">3.1 概述</a>
 
 云智易App sdk 帮助开发者基于android、iOS系统上开发App和xlink模块智能设备进行设备管理和通讯。
 SKD封装的过程包括设备发现、连接、控制、心跳、状态上报、推送报警、通知等。
 使用SDK可以简化开发者接入云智易物联网平台的开发工作量，专注企业业务功能的开发。
 
-### 3.2 接口介绍
+### <a name="step3.2"> 3.2 接口介绍</a>
 APP接口分为三大部分
 - Android SDK  封装用于Android开发环境和Android系统的设备管理和设备通讯功能接口。
 - iOS SDK 封装用于XCODE开发环境和iOS系统的设备管理和设备通讯功能接口。
 - Http RESTful接口 用于设备订阅、设备分享、设备权限管理、数据存储等设备通讯之外的其他云端服务。为了简化Http接口调用，Android透传Demo源码中提供了HttpManage类供开发者使用，需要替换HttpManage.COMPANY_ID为注册的企业ID。
 
-#### 3.2.1 Android SDK功能函数：
+#### <a name="step3.2.1">3.2.1 设备信息类XDevice介绍</a>
+  XDevice 是SDK保存设备的信息的类，由SDK封装与具体设备连接、通信的必需的设备信息的对象，XDevice对象可以通过xlinkAgent的scanDeviceByProductId方法进行局域网设备的扫描，从而获得具体设备的XDevice对象,也可以通过调用HTTP接口的获取订阅设备列表进行获取相关的订阅的设备的信息，然后通过一定的数据结构，并调用AxlinkAgent的jsonToDevice方法进行转换获取相应地XDevice对象，具体的使用参考3.2.2AndroidSDK功能函数，以下是XDevice的属性的介绍：
+  
+
+**属性：**
+
+| 属性 |获取方式| 说明 |
+| --- |---| --- |
+|address |xdevice.getAddress()| 内网的ip地址|
+| version|xdevice.getVersion()|设备的版本号|
+| mac    |xdevice.getMacAddress()|设备的mac地址|
+|port |xdevice.getPort()|设备监听的端口|
+|deviceId|xdevice.getDeviceId()|设备在公网注册的id|
+|deviceName|xdevice.getDeviceName()|设备名称|
+|productId|xdevice.getProductId()|设备的产品id|
+| mcuHardVersion|xdevice.getMcuHardVersion()|设备硬件版本|
+| mcuSoftVersion|xdevice.getMcuSoftVersion()|设备软件版本|
+| authkey|xdevice.getAuthkey()|设备授权码(v3版本已弃用，用acessKey替代)|
+| accessKey|xdevice.getAcessKey()|设备授权码|
+| subKey|xdevice.getSubKey()|设备订阅授权码|
+| productType|xdevice.getProductType()|设备类型|
+
+
+**说明：**
+XDevice对象属性获取时有些是非必需属性，所以可能部分项目通过扫描或者订阅获取的XDevice有些属性为空，视具体项目的设备固件返回信息而定。
+
+
+
+
+_ _ _
+
+
+#### <a name="step3.2.2">3.2.2 Android SDK功能函数</a>
 
 _ _ _
 
@@ -795,7 +835,40 @@ _ _ _
 
 **调用示例：**
 
-    XDevice xdevice = XlinkAgent.JsonToDevice(json);
+   如果是通过Http的获取订阅列表的接口获取的订阅设备相关数据，其返回格式为：
+   
+     
+     [{"is_online":true,"product_id":"160fa2ad2e193e00160fa2ad2e193e01","            is_active":true,"active_code":"1e0fa2ad3c417400","mcu_mod":"0","mcu_version":0,"firmware_mod":"1","mac":"ACCF238E4204",            "active_date":"2016-01-20T09:15:01.00Z","last_login":"2016-01-20T16:24:57.788Z","id":452872161,            "authorize_code":"1e0fa2ad3c417400","firmware_version":1,"role":1,"access_key":0},            {"is_online":true,"product_id":"160fa2ad2e193e00160fa2ad2e193e01",            "is_active":true,"active_code":"1e0fa2ad3bfed000","mcu_mod":"0","mcu_version":0,"firmware_mod":"1",            "mac":"ACCF238E7EA0","active_date":"2016-01-19T18:28:24.00Z","last_login":"2016-01-20T16:24:24.366Z",            "id":452875703,"authorize_code":"1e0fa2ad3bfed000","firmware_version":1,"role":0,"access_key":755660671}]
+            
+            
+  那么可以通过转换成
+  {"protocol":1
+                       "device":{
+                       "macAddress":"MAC地址",
+                        "deviceID":设备ID,
+                        "version":SDK版本号,
+                        "mcuHardVersion":硬件版本号,
+                        "mucSoftVersion":MCU软件版本号,
+                        "productID":"产品ID",
+                        "accesskey":accesskey
+                        }}
+                        的Json格式，然后封装成JSONObject对象，再调用
+                        
+         XDevice xdevice=XlinkAgent.JsonToDevice(json);
+         
+         
+       
+  获得XDevice对象，其示例代码如下：
+  
+          //subscribeDevice为获取设备订阅列表接口返回的数据的封装类
+          int mcuhardversion = subscribeDevice.getMcu_version();                        int wifihardversion = subscribeDevice.getFirmware_version();                        int mcufirmwareversion = subscribeDevice.getMcu_version();                        String mac = subscribeDevice.getMac();                        String pid = subscribeDevice.getProduct_id();                        int deviceid = subscribeDevice.getId();                        int accessKey = subscribeDevice.getAccess_key();                        JSONObject json = new JSONObject();                        try {                            json.put("protocol", 1);                            JSONObject deviceJson = new JSONObject();                            deviceJson.put("macAddress", mac);                            deviceJson.put("deviceID", deviceid);                            deviceJson.put("version", 2);//固件版本是2的新固件，返回的是1，这里强制改为2，不强制修改会导致第一次连接设备认证失败                            deviceJson.put("mcuHardVersion", mcuhardversion);                            deviceJson.put("mucSoftVersion", mcufirmwareversion);                            deviceJson.put("productID", pid);                            deviceJson.put("accesskey", accessKey);                            json.put("device", deviceJson);                            XDevice xdevice = XlinkAgent.JsonToDevice(json);
+                            }catch(Exception e){
+                            e.printTraceStack();
+                            }
+                            
+                            
+                            
+     
 
 **返回值：**
 
@@ -909,7 +982,7 @@ _ _ _
 
 _ _ _
 
-#### 3.2.2 Android 设备操作函数
+#### <a name="step3.2.3">3.2.3 Android 设备操作函数</a>
 
 
 ##### 扫描网关设备  int scanDeviceByProductID(String productId,ScanDeviceListener listener)
@@ -1117,7 +1190,7 @@ _ _ _
 | --- | --- |
 | XDevice | Device实体兑现 | 
 | accessKey | 设备授权码 | 
-| subKey | 订阅授权码 ，可以在内网通过getSubscribeKey（）方法获取| 
+| subKey | 订阅授权码 | 
 | connectListener | 监听器 | 
 
 **返回值：**
@@ -1642,7 +1715,7 @@ _ _ _
 
 	onSendPipeData
 
-#### 3.2.3 XlinkNetListener 回调说明：
+#### <a name="step3.2.4">3.2.4 XlinkNetListener 回调说明</a>
 
 ##### onStart(int code)
 
@@ -1804,22 +1877,17 @@ DEVICE_CHANGED_CONNECT_SUCCEED|	-3|	设备重新连接成功
      * bit4-7:预留 Reserved
  * formId :发送者ID 如果是服务端发送的消息, id为0
 	 * messageType:
- 	    * 1:设备端点变化发送的通知
-    	* 2:设备端点变化引起的警报
-    	* 3:设备管理员推送的分享消息
-     	* 4:厂商推送的消息广播
-     	* 5:设备属性变化通知
+ 	    * 1:设备端点变化发送的通知 JSON{”index" : 0,”value" : 100,“msg”: 管理台设置的报警内容}
+    	* 2:设备端点变化引起的警报JSON{"index" : 0,"value" : 100,“msg”: 管理台设置的报警内容}
+    	* 3:设备管理员推送的分享消息JSON{“device_id” : 123457,”invite_code” : 12345,“type”:0/1/2/3}type:0 分享请求;1 接受分享;2 拒绝分享;3 分享被取消
+     	* 4:厂商推送的消息广播JSON{"msg_type": "txt","action_type": "url/command","url": "http://xxxx.xxx.xxx","command": "xxxx","title": "xxxx","content": "xxxxx"}
+     	* 5:设备属性变化通知JSON{"device_id" : 123456789,"type" : "info/prop"}type:info 设备基本属性变化 prop 设备扩展属性变化
+     	* 6:用户和设备订阅关系发生变化通知JSON{"device_id" : 123456789,"sub" : 0/1}sub：0 订阅关系取消 1 订阅关系建立
+     	* 7:设备在线状态变化引发的通知 JSON{"device_id" : 123456789,"state" : 0 / 1}state: 0 离线 1 上线
+     	* 8:设备在线状态变化引发的告警 JSON{"device_id" : 123456789,"state" : 0 / 1}state:0 离线 1 上线
+
   * 当 messageType=1 or 2 时,
      * notifyData: 前2个字节为字符串长度,后面的所有数据为UTF8格式的字符串
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2520,7 +2588,7 @@ device | 设备实体
 
 > 纯透传APP，该功能用不到；
 
-#### 3.2.4 DeviceEntity属性说明代理回调说明
+#### 3.2.5 DeviceEntity属性说明代理回调说明
 
 APP开发者只用关心几个属性即可；
 
@@ -2563,7 +2631,7 @@ APP开发者只用关心几个属性即可；
 
 	获取设备内网的通讯地址，如果设备是公网设备，将返回空；
 
-### 3.3 常见问题
+### <a name="step3.3">3.3 常见问题</a>
 - Q:连接不上设备
 A:请检查设备是否在线；请检查是都将设备初始化到SDK。
 
@@ -2581,7 +2649,7 @@ A: 在云端配置或者设备实现通过云端推送数据需要实现XlinkNet
 
 - Q：启动调用连接和控制设备调用失败
 A: 查看是否已经调用login方法，并SDK进行了OnLogin的成功回调
-### 3.4 附录
+### <a name="step3.4>3.4 附录</a>
 
 **设备和用户的关系:**
 
