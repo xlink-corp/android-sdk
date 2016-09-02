@@ -435,7 +435,7 @@ SKD会根据网络连接情况自适应内外网络环境，会自动选择速�
             });
             }
             
- 通过上面步骤获取到设备的订阅凭证subKey后进行调用订阅的方法进行订阅
+	 通过上面步骤获取到设备的订阅凭证subKey后进行调用订阅的方法进行订阅
  
  
                    XlinkAgent.getInstance().subscribeDevice(device.getXDevice(), device.getXDevice().getSubKey(), new SubscribeDeviceListener() {
@@ -448,9 +448,7 @@ SKD会根据网络连接情况自适应内外网络环境，会自动选择速�
             });
      
  
-如果设备已经订阅，或者设备在订阅列表中存在，那么就不需要进行重复订阅了，那么就可以通过accessKey和subKey进行设备的链接，调用方式如下：
-	
-	
+	如果设备已经订阅，或者设备在订阅列表中存在，那么就不需要进行重复订阅了，那么就可以通过accessKey和subKey进行设备的链接，调用方式如下：
 	
 	//根据上一步内网发现的设备，使用AccesKey和subKey进行设备连接 如设备未设置AccessKey，连接前需要先进行AccessKey设置。
     int ret = XlinkAgent.getInstance().connectDevice(device.getXDevice(),device.getXDevice().getAccessKey(),device.getXDevice().getSubKey(), connectDeviceListener);
@@ -510,11 +508,15 @@ SKD会根据网络连接情况自适应内外网络环境，会自动选择速�
             }
 
         }
-	```
 
 	**IOS 调用示例**
+	
+	订阅设备前必须填充DeviceEntity里面的subkey属性，这属性在内网连接成功后会自动填充。如果用户订阅过设备或者手机与设备处于同一网络，直接连接设备即可（会自动订阅）。
 
 	```
+	//订阅设备
+	-(int)subscribeDevice:(DeviceEntity *)device andAuthKey:(NSNumber *)authKey andFlag:(int8_t)flag;
+	
 	//连接设备函数
 	-(void)onGotDeviceByScan:(DeviceEntity *)device;
 
