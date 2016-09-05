@@ -721,17 +721,19 @@ XDevice对象属性获取时有些是非必需属性，所以可能部分项目�
 | description|datapoint.getDescription()|数据端点描述
 | symbol|datapoint.getSymbol()|数据端点符号
 
+   
     
- **DataPoint type值：**   
-type 定义|具体int值|说明
----- | ---- | ----
-DP_TYPE_BOOL|1|布尔值
-DP_TYPE_BYTE|2|byte单字节
-DP_TYPE_SHORT|3|int16 (short)
-DP_TYPE_INT|4|int32 (int)
-DP_TYPE_FLOAT|5|float
-DP_TYPE_STRING|6|string
-DP_TYPE_BYTEARRAY|7|byte[]字节数组
+ **DataPoint type值说明：**   
+ 
+|type 定义|具体int值|说明
+|---- | ---- | ----
+|DP_TYPE_BOOL|1|布尔值
+|DP_TYPE_BYTE|2|byte单字节
+|DP_TYPE_SHORT|3|int16 (short)
+|DP_TYPE_INT|4|int32 (int)
+|DP_TYPE_FLOAT|5|float
+|DP_TYPE_STRING|6|string
+|DP_TYPE_BYTEARRAY|7|byte[]字节数组
 
 
 
