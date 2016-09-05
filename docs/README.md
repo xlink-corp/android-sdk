@@ -17,7 +17,7 @@
 - [三、API文档](#api)
 	- [3.1 概述](#step3.1)
 	- [3.2 接口介绍](#step3.2)
-	   -     [3.2.1 设备信息类XDevice介绍](#step3.2.1)    
+	   -     [3.2.1 设备信息类XDevice和数据节点DataPoint介绍](#step3.2.1)    
 	   -    [3.2.2 Android SDK功能函数](#step3.2.2)
       -    [3.2.3 Android 设备操作函数](#step3.2.3)
       -    [3.2.4 XlinkNetListener 回调说明](#step3.2.4)
@@ -614,7 +614,7 @@ SDK
 
 - [3.1 概述](#step3.1)
 - [3.2 接口介绍](#step3.2)
-   -    [3.2.1 设备信息类XDevice介绍](#step3.2.1)
+   -    [3.2.1 设备信息类XDevice和数据节点DataPoint介绍](#step3.2.1)
    -    [3.2.2 Android SDK功能函数](#step3.2.2)
       -         [void init(Context mContext)](#init)  
        -         [int start() ] (#start)
@@ -679,8 +679,8 @@ APP接口分为三大部分
 - iOS SDK 封装用于XCODE开发环境和iOS系统的设备管理和设备通讯功能接口。
 - Http RESTful接口 用于设备订阅、设备分享、设备权限管理、数据存储等设备通讯之外的其他云端服务。为了简化Http接口调用，Android透传Demo源码中提供了HttpManage类供开发者使用，需要替换HttpManage.COMPANY_ID为注册的企业ID。
 
-#### <a name="step3.2.1">3.2.1 设备信息类XDevice介绍</a>
-  XDevice 是SDK保存设备的信息的类，由SDK封装与具体设备连接、通信的必需的设备信息的对象，XDevice对象可以通过xlinkAgent的scanDeviceByProductId方法进行局域网设备的扫描，从而获得具体设备的XDevice对象,也可以通过调用HTTP接口的获取订阅设备列表进行获取相关的订阅的设备的信息，然后通过一定的数据结构，并调用AxlinkAgent的jsonToDevice方法进行转换获取相应地XDevice对象，具体的使用参考3.2.2AndroidSDK功能函数，以下是XDevice的属性的介绍：
+#### <a name="step3.2.1">3.2.1 设备信息类XDevice和数据节点DataPoint介绍</a>
+  1.XDevice 是SDK保存设备的信息的类，由SDK封装与具体设备连接、通信的必需的设备信息的对象，XDevice对象可以通过xlinkAgent的scanDeviceByProductId方法进行局域网设备的扫描，从而获得具体设备的XDevice对象,也可以通过调用HTTP接口的获取订阅设备列表进行获取相关的订阅的设备的信息，然后通过一定的数据结构，并调用AxlinkAgent的jsonToDevice方法进行转换获取相应地XDevice对象，具体的使用参考3.2.2AndroidSDK功能函数，以下是XDevice的属性的介绍：
   
 
 **属性：**
@@ -704,6 +704,34 @@ APP接口分为三大部分
 
 **说明：**
 XDevice对象属性获取时有些是非必需属性，所以可能部分项目通过扫描或者订阅获取的XDevice有些属性为空，视具体项目的设备固件返回信息而定。
+
+2.设备数据端点是服务器向SDK推送部分节点数据的封装类，主要是通过XlinkNetListener的public void onDataPointUpdate(XDevice xDevice, List<DataPoint> dataPionts, int channel)回调，下面是DataPoint的数据项介绍：
+
+
+**field介绍：**
+
+| 参数 |获取方式| 说明 |
+| --- | ---|--- |
+| index | datapoint.getIndex()|数据端点的序号，可在企业管理平台获取通过调用sdk进行设置
+|value| datapoint.getValue()|数据端点内容，可通过type知道value的类型，从而进行转换
+|type|datapoint.getType()|数据端点类型,详细见下面DataPoint type值介绍
+| min|datapoint.getMin()|数据端点最小值
+|max|datapoint.getMax()|数据端点最大值
+| name|datapoint.getName()|数据端点名称
+| description|datapoint.getDescription()|数据端点描述
+| symbol|datapoint.getSymbol()|数据端点符号
+
+    
+ **DataPoint type值：**   
+type 定义|具体int值|说明
+---- | ---- | ----
+DP_TYPE_BOOL|1|布尔值
+DP_TYPE_BYTE|2|byte单字节
+DP_TYPE_SHORT|3|int16 (short)
+DP_TYPE_INT|4|int32 (int)
+DP_TYPE_FLOAT|5|float
+DP_TYPE_STRING|6|string
+DP_TYPE_BYTEARRAY|7|byte[]字节数组
 
 
 
