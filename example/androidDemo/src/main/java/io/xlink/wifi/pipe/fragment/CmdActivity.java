@@ -119,8 +119,9 @@ public class CmdActivity extends BaseActivity implements OnClickListener {
             public boolean onLongClick(View v) {
                 ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 if (clipboardManager.hasPrimaryClip()) {
-                    cmd_textview.append(clipboardManager.getPrimaryClip().getItemAt(0).getText());
-                    handler.post(runnable);
+//                    cmd_textview.append(clipboardManager.getPrimaryClip().getItemAt(0).getText());
+//                    handler.post(runnable);
+                    cmdAdd(clipboardManager.getPrimaryClip().getItemAt(0).getText().toString());
                 }
 
                 return false;
