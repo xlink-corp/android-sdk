@@ -707,6 +707,10 @@ XDevice对象属性获取时有些是非必需属性，所以可能部分项目�
 
 2.设备数据端点是服务器向SDK推送部分节点数据的封装类，主要是通过XlinkNetListener的public void onDataPointUpdate(XDevice xDevice, List<DataPoint> dataPionts, int channel)回调，下面是DataPoint的数据项介绍：
 
+**构造函数介绍：**
+public DataPoint(int index, int type) 
+其中index为数据端点序号，type为数据端点类型，具体介绍参考以下field介绍
+
 
 **field介绍：**
 
