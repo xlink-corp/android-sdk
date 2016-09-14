@@ -233,11 +233,18 @@
 
 **IOS**
 
-1. 挂接delegate：	需要一个全局的对象作为XLINKShareObject的delegate接收器，一般情况下，我们会把App的AppDelegate作为全局delegate，如图：
+1. 设置连接的服务器地址与服务器端口号
+
+	```
+	[[XLinkExportObject sharedObject] setSDKProperty:@"cm2.xlink.cn" withKey:PROPERTY_CM_SERVER_ADDR];
+    [[XLinkExportObject sharedObject] setSDKProperty:@(23778) withKey:PROPERTY_CM_SERVER_PORT];
+	```
+
+2. 挂接delegate：	需要一个全局的对象作为XLINKShareObject的delegate接收器，一般情况下，我们会把App的AppDelegate作为全局delegate，如图：
 
 	![](http://i.imgur.com/84l0Tzm.png)
 
-2. 启动XLinkExportObject
+3. 启动XLinkExportObject
 	```
 	[[XLinkExportObject shareObject] start];
 	```
@@ -511,9 +518,12 @@ SKD会根据网络连接情况自适应内外网络环境，会自动选择速�
 
 	**IOS 调用示例**
 	
-	订阅设备前必须填充DeviceEntity里面的subkey属性，这属性在内网连接成功后会自动填充。如果用户订阅过设备或者手机与设备处于同一网络，直接连接设备即可（会自动订阅）。
+	如果用户订阅过设备或者手机与设备处于同一网络，直接连接设备即可（会自动订阅）。用户也可以手动订阅设备（v3版本后需要通过accesskey调用方法换取SUBKEY订阅）
 
 	```
+	//获取SUBKEY
+	-(int)getSubKeyWithDevice:(DeviceEntity *)device withAccesskey:(NSNumber *)ack;
+	
 	//订阅设备
 	-(int)subscribeDevice:(DeviceEntity *)device andAuthKey:(NSNumber *)authKey andFlag:(int8_t)flag;
 	
