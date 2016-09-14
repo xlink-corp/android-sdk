@@ -23,7 +23,6 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:18.0.0'
     compile files('libs/android-async-http-1.4.6.jar')
-    compile files('libs/xlink-wifi-official-sdk_v3_21048.jar')
     compile 'com.google.code.gson:gson:2.4'
 //    compile project(':xlinkwifiofficialsdk')
 }
