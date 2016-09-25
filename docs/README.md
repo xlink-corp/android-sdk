@@ -229,6 +229,9 @@
           
           调用该方法后，sdk会优先进行内网连接，连接失败或者超时再尝试进行外网连接 
           
+####注意：
+  调用初始化方法XlinkAgent.init(Context)和添加监听的回调XlinkNetListener方法不能在子线程中进行操作，否则可能会出错
+          
             
 
 **IOS**
@@ -672,7 +675,7 @@ SDK
        -  [数据端点更新回调 onDataPointUpdate(XDevice xDevice, List < DataPiont > dataPionts)](#onDataPointUpdate)
        -  [设备状态改变回调 onDeviceStateChanged(XDevice xdevice, int state)](#onDeviceStateChanged)
        -  [设备、云端通知和告警回调 onEventNotify(EventNotify eventNotify)](#onEventNotify)
-   -    [3.2.5 DeviceEntity属性说明代理回调说明](#step3.2.5)
+   -    [3.2.5 subscribeDevice 回调说明](#step3.2.5)
 - [3.3 常见问题](#step3.3)
 - [3.4 附录](#step3.4)
 
@@ -1996,11 +1999,30 @@ DEVICE_CHANGED_CONNECT_SUCCEED|	-3|	设备重新连接成功
   * 当 messageType=1 or 2 时,
      * notifyData: 前2个字节为字符串长度,后面的所有数据为UTF8格式的字符串
 
+#### <a name="step3.2.5">3.2.5 subscribeDevice 回调说明</a>
+#####回调方法：public void onSubscribeDevice(XDevice xDevice, int code)
+
+**参数 :**
+
+| 参数 | 说明 |
+| --- | --- |
+| xDevice | 设备对象
+|code |返回码（详细见下）|
+
+**返回码说明 :**
+| 返回码 | 说明 |
+|0|订阅成功|
+|3|设备未在该企业授权|
+|10|设备不在线|
+
 
 
 
 
 #### 3.2.2 IOS SDK 功能函数
+
+	详细错误码可见 XLinkExportObject.h 文件里面的“通用错误码定义”.
+
 ##### 1. 启动SDK
 
 ```
@@ -2181,7 +2203,61 @@ device | 设备实体
 
 > 设置结果通过onSetDeviceAuthorizeCode返回
 
-##### 7. 连接一个设备
+##### 7. 获取SUBKEY (v3版本新增)
+
+**函数：**
+
+```
+ -(int)getSubKeyWithDevice:(DeviceEntity *)device withAccesskey:(NSNumber *)ack;
+```
+**说明：**
+
+* v3版本如需要订阅设备，需要订阅设备的SUBKEY；
+* 该函数只有当设备与app在同一局域网下才能成功获取；
+
+**参数：**
+
+	device设备实体;
+	ack设备授权码;
+
+**返回值：**
+
+	0成功;
+	其他失败;
+
+**备注：**
+
+	如果获取到SUBKEY通过onGotSubKeyWithDevice回调
+
+##### 8. 手动订阅设备
+
+**函数：**
+
+```
+ -(int)subscribeDevice:(DeviceEntity *)device andAuthKey:(NSNumber *)authKey andFlag:(int8_t)flag;
+```
+**说明：**
+
+* 控制设备之前，先要去连接设备；
+* 该函数会自动识别设备是本地可用还是云端可用；
+
+**参数：**
+
+	device设备实体;
+	authKey(v1、v2版本是设备的授权码，v3版本是设备的订阅码(SUBKEY));
+	flag 1:订阅 0:取消订阅
+
+**返回值：**
+
+	0成功;
+	其他失败;
+
+**备注：**
+
+	订阅结果通过onSubscription回调
+
+
+##### 9. 连接一个设备
 
 **函数：**
 
@@ -2206,8 +2282,9 @@ device | 设备实体
 **备注：**
 
 	连接结果通过onConnectDevice回调
+	连接状态通过onDeviceStatusChanged回调
 
-##### 8.发送本地透传数据
+##### 10.发送本地透传数据
 
 **函数：**
 
@@ -2235,7 +2312,7 @@ payload | 数据值，二进制的。
 
 > 其发送结果通过onSendLocalPipeData回调返回。
 
-##### 9. 通过云端发送透传数据
+##### 11. 通过云端发送透传数据
 
 **函数：**
 
@@ -2262,7 +2339,7 @@ payload | 数据值，二进制的
 
 > 其发送结果通过onSendLocalPipeData回调返回。
 
-##### 10. 探测云端设备状态
+##### 12. 探测云端设备状态
 
 **函数：**
 
@@ -2288,7 +2365,7 @@ device ｜ 设备实体
 其他 | 失败
 >探测结果异步通过onDeviceProbe回调
 
-##### 11. 本地设置数据端点
+##### 13. 本地设置数据端点
 
 **函数：**
 
@@ -2314,7 +2391,7 @@ device ｜ 设备实体
 msgID（非0） | 成功
 0 | 失败
 
-##### 12. 云端设置数据端点
+##### 14. 云端设置数据端点
 
 **函数：**
 
@@ -2340,7 +2417,7 @@ device ｜ 设备实体
 msgID（非0） | 成功
 0 | 失败
 
-##### 13. 获取SDK中所有设备列表
+##### 15. 获取SDK中所有设备列表
 
 **函数：**
 
@@ -2362,7 +2439,7 @@ msgID（非0） | 成功
 | --- | --- |
 NSArray | DeviceEntity * 实体的队列
 
-##### 14. 释放SDK
+##### 16. 释放SDK
 
 **函数：**
 
@@ -2734,6 +2811,18 @@ APP开发者只用关心几个属性即可；
 	    }
 	}
 
+##### -(id)initWithDictionary:(NSDictionary *)dict;
+	把json类型转成 DeviceEntity 对象
+
+##### -(id)initWithMac:(NSString *)mac andProductID:(NSString *)pid;
+	自定义设备，mac 和 pid 是必须的。
+	已设置过accesskey的设备可以加上accesskey
+	device.accessKey = ack;
+	v3版本还需要加上版本号
+	device.version = version;
+	已经订阅过，需要直接外网连接的需要加上deviceID
+	device.deviceID = deviceID;
+
 ##### -(NSString*)getLocalAddress;
 
 	获取设备内网的通讯地址，如果设备是公网设备，将返回空；
@@ -2855,6 +2944,8 @@ DEVICE_STATE_LOCAL_LINK|0|设备局域网在线|XDevice 的getDevcieConnectState
 DEVICE_STATE_OUTER_LINK|1|设备云端在线|XDevice 的getDevcieConnectStates()方法
 CHANGED_UPDATAPOINT_LOCAL|0|内网通道的更新数据端点包channel类型|onDataPointUpdate(XDevice,List<DataPoint> datapoints, int channel)
 CHANGED_UPDATAPOINT_CLOUD|1|云端网络通道的更新数据端点包channel类型|onDataPointUpdate(XDevice,List<DataPoint> datapoints, int channel)
+onSubscribeDevice回调|3|未在该企业授权|public void onSubscribeDevice(XDevice xDevice, int i)
+onSubscribeDevice回调|10|设备不在线|public void onSubscribeDevice(XDevice xDevice, int i)
 ...	| ... | ... | ...
 
 ## 四、设备分享
