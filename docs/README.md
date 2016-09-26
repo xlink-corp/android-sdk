@@ -17,11 +17,14 @@
 - [三、API文档](#api)
 	- [3.1 概述](#step3.1)
 	- [3.2 接口介绍](#step3.2)
-	   -     [3.2.1 设备信息类XDevice和数据节点DataPoint介绍](#step3.2.1)    
-	   -    [3.2.2 Android SDK功能函数](#step3.2.2)
-      -    [3.2.3 Android 设备操作函数](#step3.2.3)
-      -    [3.2.4 XlinkNetListener 回调说明](#step3.2.4)
-      -    [3.2.5 DeviceEntity属性说明代理回调说明](#step3.2.5)
+	   - [3.2.1 设备信息类XDevice和数据节点DataPoint介绍](#step3.2.1)    
+	   - [3.2.2 Android SDK功能函数](#step3.2.2)
+      - [3.2.3 Android 设备操作函数](#step3.2.3)
+      - [3.2.4 XlinkNetListener 回调说明](#step3.2.4)
+      - [3.2.5 Android DeviceEntity属性说明代理回调说明](#step3.2.5)
+      - [3.2.6 IOS SDK 功能函数](#step3.2.6)
+      - [3.2.7 IOS 代理回调说明](#step3.2.7)
+      - [3.2.8 IOS DeviceEntity属性说明代理回调说明](#step3.2.8)
 	- [3.3 常见问题](#step3.3)
 	- [3.4 附录](#step3.4)
 - [四、设备分享](#四、设备分享)
@@ -38,7 +41,8 @@
 		- [4.4.7、附录](#4.4.7、附录)
 	- [4.5、注意事项](#4.5、注意事项)
 - [五、术语表](#Glossary)
-- [六、修改记录](#changeList)
+- [六、更新历史](#history)
+
 
 ## 一、<a name="Introduction">简介</a>
 
@@ -624,57 +628,91 @@ SDK
 
 ##三、<a name="api">API文档</a>
 
-
 - [3.1 概述](#step3.1)
 - [3.2 接口介绍](#step3.2)
-   -    [3.2.1 设备信息类XDevice和数据节点DataPoint介绍](#step3.2.1)
-   -    [3.2.2 Android SDK功能函数](#step3.2.2)
-      -         [void init(Context mContext)](#init)  
-       -         [int start() ] (#start)
-       -         [int login(int user_id, String app_key)](#login)
-       -         [void setPreInnerServiceMode(boolean pre)](#setPreInnerServiceMode)
-       -         [boolean initDevice(XDevice device)](#initDevice)
-       -         [void setSSL(String KeystorepathTrust, String password)](#setSSL)
-       -         [XDevice JsonToDevice(JSONObject jsonObject)](#JsonToDevice)
-       -         [JSONObject   deviceToJson(XDevice device)](#deviceToJson)
-       -         [void  stop()](#stop)
-       -         [void addXlinkListener(XlinkNetListener listener)](#addXlinkListener)
-       -         [void debug(boolean debug)](#debug)
-       -         [boolean isConnectedOuterNet()](#isConnectedOuterNet)
-       -         [boolean isConnectedLocal()](#isConnectedLocal)
-   -    [3.2.3 Android 设备操作函数](#step3.2.3)
-      
-       -   [扫描网关设备  int scanDeviceByProductID(String productId,ScanDeviceListener listener) ](#scanDeviceByProductID)
-       -   [设置设备授权码 int setDeviceAccessKey(XDevice device, final int accessKey, final SetDeviceAccessKeyListener listener)](#setDeviceAccessKey)
-       -   [获取设备的subscribeKey int getDeviceSubscribeKey(XDevice device, final int accessKey, final GetSubscribeKeyListener listener)](#getDeviceSubscribeKey)
-       -   [连接设备 int connectDevice(XDevice device,final int accessKey,int subkey, ConnectDeviceListener connectListener)](#connectDevicev3)
-       - [连接设备 connectDevice(XDevice device, final String auth, final ConnectDeviceListener connectListener)](#connectDevicev1)  
-       -  [连接设备 connectDevice(XDevice device, final int accessKey, final ConnectDeviceListener connectListener)](#connectDevicev2)
-       -  [连接设备 int connectDevice(XDevice device, ConnectDeviceListener connectListener)](#connectDevicev32)
-       -  [设置数据端点 int setDataPoint(XDevice xdevice, List< DataPiont > dataPionts,SetDataPointListener listener)](#setDataPoint)
-       -  [订阅设备 int subscribeDevice(XDevice device, int subKey, SubscribeDeviceListener listener)](#subscribeDevicev3)
-       -  [订阅设备 int subscribeDevice(XDevice device, String authCode, SubscribeDeviceListener listener)](#subscribeDevicev1)
-       -  [取消订阅 int unsubscribeDevice(XDevice device, String authCode, SubscribeDeviceListener listener)](#unsubscribeDevicev1)
-       -  [取消订阅设备 int unsubscribeDevice(XDevice device, int accessKey, SubscribeDeviceListener listener)](#unsubscribeDevicev2)
-       -  [修改本地accessKey int setLocalDeviceAccessKey(XDevice device, int accessKey, SetDeviceAccessKeyListener listener)](#setLocalDeviceAccessKey)
-       -  [探测设备是否在线 int sendProbe(XDevice device)](#sendProbe)
-       -  [本地发送数据透传 （非云端，局域网直连设备）int sendLocalPipeData(XDevice device, byte flag, byte[] data, int timeOut, SendPipeListener listener) ](#sendLocalPipeData)
-       -  [本地列表移除设备 int removeDevice(XDevice xDevice)](#removeDevice)
-       -  [ 本地列表移除设备 int removeDevice(String mac)](#removeDeviceByMac)
-       -  [本地列表移除所有设备 int removeAllDevice()](#removeAllDevice)
-       -  [向设备发送透传数据 int sendPipeData(XDevice device, byte[] data, SendPipeListener listener)](#sendPipeData1)
-       -  [向设备发送透传数据 int sendPipeData(XDevice device, byte[] data, int timeOut,SendPipeListener listener)](#sendPipeData2)
-   
-   -    [3.2.4 XlinkNetListener 回调说明](#step3.2.4)
-       -  [内网连接回调 onStart(int code)](#onStart) 
-       -  [外网连接回调 onLogin(int code)](#onLogin)
-       -  [SDK断开连接回调 onDisconnect(int code)](#onDisconnect)
-       -  [SDK本地连接断开回调 onLocalDisconnect(int code)](#onLocalDisconnect)
-       -  [SDK 透传数据回调 onRecvPipeData(XDevice device, byte flags, byte[] data)](#onRecvPipeData) 
-       -  [SDK 云端透传数据 onRecvPipeSyncData(XDevice device, byte flags, byte[] data)](#onRecvPipeSyncData)
-       -  [数据端点更新回调 onDataPointUpdate(XDevice xDevice, List < DataPiont > dataPionts)](#onDataPointUpdate)
-       -  [设备状态改变回调 onDeviceStateChanged(XDevice xdevice, int state)](#onDeviceStateChanged)
-       -  [设备、云端通知和告警回调 onEventNotify(EventNotify eventNotify)](#onEventNotify)
+	- [3.2.1 设备信息类XDevice和数据节点DataPoint介绍](#step3.2.1)
+	- [3.2.2 Android SDK功能函数](#step3.2.2)
+		- [void init(Context mContext)](#init)  
+		- [int start() ] (#start)
+		- [int login(int user_id, String app_key)](#login)
+		- [void setPreInnerServiceMode(boolean pre)](#setPreInnerServiceMode)
+		- [boolean initDevice(XDevice device)](#initDevice)
+		- [void setSSL(String KeystorepathTrust, String password)](#setSSL)
+		- [XDevice JsonToDevice(JSONObject jsonObject)](#JsonToDevice)
+		- [JSONObject   deviceToJson(XDevice device)](#deviceToJson)
+		- [void  stop()](#stop)
+		- [void addXlinkListener(XlinkNetListener listener)](#addXlinkListener)
+		- [void debug(boolean debug)](#debug)
+		- [boolean isConnectedOuterNet()](#isConnectedOuterNet)
+		- [boolean isConnectedLocal()](#isConnectedLocal)
+	- [3.2.3 Android 设备操作函数](#step3.2.3)
+		- [扫描网关设备  int scanDeviceByProductID(String productId,ScanDeviceListener listener) ](#scanDeviceByProductID)
+		- [设置设备授权码 int setDeviceAccessKey(XDevice device, final int accessKey, final SetDeviceAccessKeyListener listener)](#setDeviceAccessKey)
+		- [获取设备的subscribeKey int getDeviceSubscribeKey(XDevice device, final int accessKey, final GetSubscribeKeyListener listener)](#getDeviceSubscribeKey)
+		- [连接设备 int connectDevice(XDevice device,final int accessKey,int subkey, ConnectDeviceListener connectListener)](#connectDevicev3)
+		- [连接设备 connectDevice(XDevice device, final String auth, final ConnectDeviceListener connectListener)](#connectDevicev1)  
+		- [连接设备 connectDevice(XDevice device, final int accessKey, final ConnectDeviceListener connectListener)](#connectDevicev2)
+		- [连接设备 int connectDevice(XDevice device, ConnectDeviceListener connectListener)](#connectDevicev32)
+		- [设置数据端点 int setDataPoint(XDevice xdevice, List< DataPiont > dataPionts,SetDataPointListener listener)](#setDataPoint)
+		- [订阅设备 int subscribeDevice(XDevice device, int subKey, SubscribeDeviceListener listener)](#subscribeDevicev3)
+		- [订阅设备 int subscribeDevice(XDevice device, String authCode, SubscribeDeviceListener listener)](#subscribeDevicev1)
+		- [取消订阅 int unsubscribeDevice(XDevice device, String authCode, SubscribeDeviceListener listener)](#unsubscribeDevicev1)
+		- [取消订阅设备 int unsubscribeDevice(XDevice device, int accessKey, SubscribeDeviceListener listener)](#unsubscribeDevicev2)
+		- [修改本地accessKey int setLocalDeviceAccessKey(XDevice device, int accessKey, SetDeviceAccessKeyListener listener)](#setLocalDeviceAccessKey)
+		- [探测设备是否在线 int sendProbe(XDevice device)](#sendProbe)
+		- [本地发送数据透传 （非云端，局域网直连设备）int sendLocalPipeData(XDevice device, byte flag, byte[] data, int timeOut, SendPipeListener listener) ](#sendLocalPipeData)
+		- [本地列表移除设备 int removeDevice(XDevice xDevice)](#removeDevice)
+		- [ 本地列表移除设备 int removeDevice(String mac)](#removeDeviceByMac)
+		- [本地列表移除所有设备 int removeAllDevice()](#removeAllDevice)
+		- [向设备发送透传数据 int sendPipeData(XDevice device, byte[] data, SendPipeListener listener)](#sendPipeData1)
+		- [向设备发送透传数据 int sendPipeData(XDevice device, byte[] data, int timeOut,SendPipeListener listener)](#sendPipeData2)
+	- [3.2.4 XlinkNetListener 回调说明](#step3.2.4)
+		- [内网连接回调 onStart(int code)](#onStart) 
+		- [外网连接回调 onLogin(int code)](#onLogin)
+		- [SDK断开连接回调 onDisconnect(int code)](#onDisconnect)
+		- [SDK本地连接断开回调 onLocalDisconnect(int code)](#onLocalDisconnect)
+		- [SDK 透传数据回调 onRecvPipeData(XDevice device, byte flags, byte[] data)](#onRecvPipeData) 
+		- [SDK 云端透传数据 onRecvPipeSyncData(XDevice device, byte flags, byte[] data)](#onRecvPipeSyncData)
+		- [数据端点更新回调 onDataPointUpdate(XDevice xDevice, List < DataPiont > dataPionts)](#onDataPointUpdate)
+		- [设备状态改变回调 onDeviceStateChanged(XDevice xdevice, int state)](#onDeviceStateChanged)
+		- [设备、云端通知和告警回调 onEventNotify(EventNotify eventNotify)](#onEventNotify)
+	- [3.2.5 Android DeviceEntity属性说明代理回调说明](#step3.2.5)
+	- [3.2.6 IOS SDK 功能函数](#step3.2.6)
+		- [1. 启动SDK -(int)start](#step3.2.6.1)
+		- [2. 初始化设备 -(int)start](#step3.2.6.2)
+		- [3. 连接到云端 -(int)loginWithAppID:(int)appId andAuthStr:(NSString*)aut](#step3.2.6.3)
+		- [4. 通过产品ID扫描设备 -(int)scanByDeviceProductID:(NSString*)productID](#step3.2.6.4)
+		- [5. 通过本地通讯设置设备授权码 -(int)setAccessKey:(NSNumber *)accessKey withDevice:(DeviceEntity *)device](#step3.2.6.5)
+		- [6. 通过本地通讯设置设备授权码(v2版本已淘汰) -(int)setLocalDeviceAuthorizeCode:(DeviceEntity*)device andOldAuthCode:(NSString*)oldAuth andNewAuthCode:(NSString*)newAuth](#step3.2.6.6)
+		- [7. 通过云端设置设备授权码(v2版本已淘汰) -(int)setDeviceAuthorizeCode:(DeviceEntity*)device andOldAuthKey:(NSString*)oldAuth andNewAuthKey:(NSString*)newAuth](#step3.2.6.7)
+		- [8. 获取SUBKEY (v3版本新增) -(int)getSubKeyWithDevice:(DeviceEntity *)device withAccesskey:(NSNumber *)ack](#step3.2.6.8)
+		- [9. 手动订阅设备 -(int)subscribeDevice:(DeviceEntity *)device andAuthKey:(NSNumber *)authKey andFlag:(int8_t)flag](#step3.2.6.9)
+		- [10. 连接一个设备 -(int)connectDevice:(DeviceEntity *)device andAuthKey:(NSNumber *)authKey](#step3.2.6.10)
+		- [11. 发送本地透传数据 -(int)sendLocalPipeData:(DeviceEntity*)device andPayload:(NSData*)payload](#step3.2.6.11)
+		- [12. 通过云端发送透传数据-(int)sendPipeData:(DeviceEntity*)device andPayload:(NSData*)payload](#step3.2.6.12)
+		- [13. 探测云端设备状态 -(int)probeDevice:(DeviceEntity*)device](#step3.2.6.13)
+		- [14. 本地设置数据端点 -(unsigned short)setLocalDataPoints:(NSArray<DataPointEntity *> *)dataPoints withDevice:(DeviceEntity *)device](#step3.2.6.14)
+		- [15. 云端设置数据端点 -(unsigned short)setCloudDataPoints:(NSArray<DataPointEntity *> *)dataPoints withDevice:(DeviceEntity *)device](#step3.2.6.15)
+		- [16. 获取SDK中所有设备列表 -(NSArray*)getAllDevice](#step3.2.6.16)
+		- [17. 释放SDK -(void)stop](#step3.2.6.17)
+	- [3.2.7 IOS 代理回调说明](#step3.2.7)
+		- [1. onStart](#step3.2.7.1)
+		- [2. onLogin](#step3.2.7.2)
+		- [3. onGotDeviceByScan](#step3.2.7.3)
+		- [4. onSetDeviceAccessKey(v2版本开始使用)](#step3.2.7.4)
+		- [5. onSetLocalDeviceAuthorizeCode(v2版本已淘汰)](#step3.2.7.5)
+		- [6. onSetDeviceAuthorizeCode(v2版本已淘汰)](#step3.2.7.6)
+		- [7. onSendLocalPipeData](#step3.2.7.7)
+		- [8. onSendPipeData](#step3.2.7.8)
+		- [9. onRecvLocalPipeData](#step3.2.7.9)
+		- [10. onRecvPipeData](#step3.2.7.10)
+		- [11. onRecvPipeSyncData](#step3.2.7.11)
+		- [12. onDeviceProbe](#step3.2.7.12)
+		- [13. onConnectDevice](#step3.2.7.13)
+		- [14. onDeviceStateChanged](#step3.2.7.14)
+		- [15. onLocalDataPoint2Update](#step3.2.7.15)
+		- [16. onCloudDataPoint2Update](#step3.2.7.16)
+	- [3.2.8 IOS DeviceEntity属性说明代理回调说明](#step3.2.8)
 - [3.3 常见问题](#step3.3)
 - [3.4 附录](#step3.4)
 
@@ -698,7 +736,7 @@ APP接口分为三大部分
 **属性：**
 
 | 属性 |获取方式| 说明 |
-| --- |---| --- |
+|--------|--------|--------|
 |address |xdevice.getAddress()| 内网的ip地址|
 | version|xdevice.getVersion()|设备的版本号|
 | mac    |xdevice.getMacAddress()|设备的mac地址|
@@ -727,7 +765,7 @@ public DataPoint(int index, int type)
 **field介绍：**
 
 | 参数 |获取方式| 说明 |
-| --- | ---|--- |
+|--------|--------|--------|
 | index | datapoint.getIndex()|数据端点的序号，可在企业管理平台获取通过调用sdk进行设置
 |value| datapoint.getValue()|数据端点内容，可通过type知道value的类型，从而进行转换
 |type|datapoint.getType()|数据端点类型,详细见下面DataPoint type值介绍
@@ -742,7 +780,7 @@ public DataPoint(int index, int type)
  **DataPoint type值说明：**   
  
 |type 定义|具体int值|说明
-|---- | ---- | ----
+|---------|---------|---------
 |DP_TYPE_BOOL|1|布尔值
 |DP_TYPE_BYTE|2|byte单字节
 |DP_TYPE_SHORT|3|int16 (short)
@@ -773,7 +811,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 |mContext | ApplicationContext实例，参数会持续引用|
 
 _ _ _
@@ -789,7 +827,7 @@ _ _ _
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | = 0 | 调用成功
 | < 0 | 调用失败,失败code请观看同步错误码;
 
@@ -817,7 +855,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | user_id | 通过HTTP接口获取到的连接云端的用户ID |
 | app_key | 连接云端认证码 |
 
@@ -828,7 +866,7 @@ _ _ _
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | = 0 | 调用成功
 | < 0 | 调用失败,失败code请观看同步错误码;
 
@@ -848,7 +886,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | pre | 是否优先内网连接|
   
 **调用示例：**
@@ -873,7 +911,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 |XDevice | Device实体对象|
 
 **调用示例：**
@@ -883,7 +921,7 @@ _ _ _
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 |true  | 向SDK添加设备成功
 |false | 添加设备失败，设备属性错误
 
@@ -900,7 +938,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | KeystorepathTrust | 秘钥名|
 | password | 秘钥密码|
 
@@ -924,7 +962,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 |jsonObject | 设备的json对象
 
 **调用示例：**
@@ -967,7 +1005,7 @@ _ _ _
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 |XDevice | 序列化成功后的Device对象
 |NULL | jsonObject错误
 
@@ -999,7 +1037,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 |device | XDevice实例
 
 _ _ _
@@ -1031,7 +1069,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | listener | SDK回调监听
 _ _ _
 
@@ -1046,7 +1084,7 @@ _ _ _
        XlinkAgent.getInstance().debug(debug);
        
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | debug | 是否打印debug日志
 _ _ _
 
@@ -1063,7 +1101,7 @@ _ _ _
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 |true | 已连接
 |false | 未连接
 
@@ -1083,7 +1121,7 @@ _ _ _
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 |true | 启用|
 |false | 未启用|
 
@@ -1123,14 +1161,14 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 |productid | 设备的产品id|
 |ScanDeviceListener | 扫描回调 监听器|
 
 **返回值：**
 
 XlinkCode 对应常量| 值 | 说明 |
-|---| --- | --- |
+|--------|--------|--------|
 |XlinkCode.SUCEESS| = 0 | 调用成功|
 |XlinkCode.NO_CONNECT_SERVER| -4 | 未开启局域网服务|
 | 其它|< 0 | 调用失败,失败code参见 同步错误码|
@@ -1154,7 +1192,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | XDevice | Device实体对象
 | accessKey | 设备密码(授权码) 支持9位数字
 | listener | 监听器
@@ -1162,7 +1200,7 @@ _ _ _
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | = 0 | 调用成功 |
 | < 0 | 调用失败,失败code参见 同步错误码 |
 
@@ -1184,7 +1222,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | XDevice | Device实体对象
 | accessKey | 设备密码(授权码) 支持9位数字
 | listener | 监听器
@@ -1192,7 +1230,7 @@ _ _ _
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | = 0 | 调用成功 |
 | < 0 | 调用失败,失败code参见 同步错误码 |
 
@@ -1295,7 +1333,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | XDevice | Device实体兑现 | 
 | accessKey | 设备授权码 | 
 | subKey | 订阅授权码 | 
@@ -1304,7 +1342,7 @@ _ _ _
 **返回值：**
 
 |对应的XlinkCode常量| 值 | 说明 |
-| --- | --- |---|
+|--------|--------|--------|
 |`SUCCESS`| = 0 | 调用成功 |
 |`NO_CONNECT_SERVER`| -4  | 手机未连接服务器
 |`NO_DEVICE`| -6  |未找到该设备
@@ -1329,7 +1367,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | XDevice | Device实体兑现 | 
 | auth | 设备授权码 | 
 | connectListener | 监听器 | 
@@ -1337,7 +1375,7 @@ _ _ _
 **返回值：**
 
 |对应的XlinkCode常量| 值 | 说明 |
-| --- | --- |---|
+|--------|--------|--------|
 |`SUCCESS`| = 0 | 调用成功 |
 |`NO_CONNECT_SERVER`| -4  | 手机未连接服务器
 |`NO_DEVICE`| -6  |未找到该设备
@@ -1363,7 +1401,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | XDevice | Device实体兑现 | 
 | accessKey | 设备授权码 | 
 | connectListener | 监听器 | 
@@ -1371,7 +1409,7 @@ _ _ _
 **返回值：**
 
 |对应的XlinkCode常量| 值 | 说明 |
-| --- | --- |---|
+|--------|--------|--------|
 |`SUCCESS`| = 0 | 调用成功 |
 |`NO_CONNECT_SERVER`| -4  | 手机未连接服务器
 |`NO_DEVICE`| -6  |未找到该设备
@@ -1398,14 +1436,14 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | XDevice | Device实体兑现 | 
 | connectListener | 监听器 | 
 
 **返回值：**
 
 |对应的XlinkCode常量| 值 | 说明 |
-| --- | --- |---|
+|--------|--------|--------|
 |`SUCCESS`| = 0 | 调用成功 |
 |`NO_CONNECT_SERVER`| -4  | 手机未连接服务器
 |`NO_DEVICE`| -6  |未找到该设备
@@ -1431,14 +1469,14 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | xdevice| XDevice实体对象
 | dataPionts | 需要设置的数据端点列表|
 
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | = 0 | 调用成功 |
 | < 0 | 调用失败,失败code参见 同步错误码 |
 
@@ -1462,7 +1500,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | DeviceObject | Device实体对象
 | subKey | 订阅授权码
 | listener | 监听器
@@ -1470,7 +1508,7 @@ _ _ _
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | = 0 | 调用成功；
 | < 0 | app本地错误;详情参见同步错误码;
 
@@ -1494,7 +1532,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | Device实体对象
 | authCode | 订阅授权码
 | listener | 监听器
@@ -1502,7 +1540,7 @@ _ _ _
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | = 0 | 调用成功；
 | < 0 | app本地错误;详情参见同步错误码;
 
@@ -1527,7 +1565,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | Device实体对象
 | authCode | 订阅授权码
 | listener | 监听器
@@ -1535,7 +1573,7 @@ _ _ _
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | = 0 | 调用成功；
 | < 0 | app本地错误;详情参见同步错误码;
 
@@ -1559,7 +1597,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | Device实体对象
 | accessKey | 订阅授权码
 | listener | 监听器
@@ -1567,7 +1605,7 @@ _ _ _
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | = 0 | 调用成功；
 | < 0 | app本地错误;详情参见同步错误码;
 
@@ -1588,7 +1626,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | Device实体对象
 | accessKey | 授权码
 | listener | 监听器
@@ -1596,7 +1634,7 @@ _ _ _
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | = 0 | 调用成功；
 | < 0 | app本地错误;详情参见同步错误码;
 
@@ -1618,13 +1656,13 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | Device实体对象
 
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | = 0 | 调用成功；
 | < 0 | app本地错误;详情参见同步错误码;
 
@@ -1641,7 +1679,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | Device实体对象
 | flag | 消息类型
 | data | 字节数组数据
@@ -1650,7 +1688,7 @@ _ _ _
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | = 0 | 调用成功；
 | < 0 | app本地错误;详情参见同步错误码;
 
@@ -1668,13 +1706,13 @@ _ _ _
 * 清除在sdk 列表中的某个设备
 
 | 参数  | 说明 |
-| --- | --- |
+|--------|--------|
 | xDevice | 设备对象
 
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | = 0 | 调用成功；
 | - 8 （XlinkCode.INVALID_PARAM）| 设备不存在
 
@@ -1688,13 +1726,13 @@ _ _ _
 * 清除在sdk 列表中的某个设备
 
 | 参数  | 说明 |
-| --- | --- |
+|--------|--------|
 | mac | 设备mac地址
 
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | = 0 | 调用成功；
 | - 8 （XlinkCode.INVALID_PARAM）| 设备不存在
 
@@ -1770,14 +1808,14 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | DeviceObject | Device实体对象
 | byte[] | Pipe数据
 
 **返回值：**
 
 |对应的XlinkCode常量| 值 | 说明 |
-| --- | --- |----|
+|--------|--------|---------|
 |`SUCCEED`|  0 | 调用成功；
 |`NO_CONNECT_SERVER`| -4 |未连接服务器
 | `NETWORD_UNAVAILABLE`|-10|当前网络不可用
@@ -1803,7 +1841,7 @@ _ _ _
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | Device实体对象
 | byte[] | Pipe数据
 | timeOut |超时时间，单位秒
@@ -1812,7 +1850,7 @@ _ _ _
 **返回值：**
 
 |对应的XlinkCode常量| 值 | 说明 |
-| --- | --- |----|
+|--------|--------|---------|
 |`SUCCEED`|  0 | 调用成功；
 |`NO_CONNECT_SERVER`| -4 |未连接服务器
 | `NETWORD_UNAVAILABLE`|-10|当前网络不可用
@@ -1835,7 +1873,7 @@ _ _ _
 **返回值：**
 
 XlinkCode常量 | int实际值 | 说明
----- | ---- | ----
+----|---------|---------
 `SUCCEED`|0|成功
 `LOCAL_CONNECT_ERROR`|-1	|绑定端口失败
 ...|...|...
@@ -1849,7 +1887,7 @@ XlinkCode常量 | int实际值 | 说明
 **返回值：**
 
 XlinkCode 常量|int实际值|说明|
----- | ---- | ---- |
+----|---------|---------|
 `SUCCEED`|0|登录服务器成功|
 `CLOUD_CONNECT_ERROR`|-1|连接公网服务器失败（解析域名失败/无网络连接/网络响应超时）
 `CLOUD_CONNECT_NO_NETWORK`|-2|无物理网络连接
@@ -1869,7 +1907,7 @@ XlinkCode 常量|int实际值|说明|
 **返回值:**
 
 | XlinkCode 常量 | int实际值 | 说明 |
-| ---- | ---- | ---- |
+|---------|---------|---------|
 | `CLOUD_STATE_DISCONNECT` | -1 | 网络问题导致和服务器连接中端(不需要处理，会自动重连) |
 | `CLOUD_KEEPALIVE_ERROR` | -2 | 和服务器心跳异常，导致从服务器掉线(不需要处理，会自动重连) |
 | `CLOUD_SERVICE_KILL` | -3 |XlinkTcpServrce服务被异常杀死（如360等安全软件）.（需要重新调用login函数）| 
@@ -1885,7 +1923,7 @@ XlinkCode 常量|int实际值|说明|
 **返回值：**
 
 | XlinkCode 常量 | int实际值 | 说明 |
-| ---- | ---- | ---- |
+|---------|---------|---------|
 | `LOCAL_THREAD_ERROR` | -1 | 无物理网络 |
 | `LOCAL_SERVICE_KILL` | -2 | XlinkUdpServrce服务被异常杀死（如360等安全软件),需要重新调用start函数。 |
 | ... | ... | ... |
@@ -1899,7 +1937,7 @@ XlinkCode 常量|int实际值|说明|
 **参数 :**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实体
 |flags|标识|
 | data | byte数据
@@ -1913,7 +1951,7 @@ XlinkCode 常量|int实际值|说明|
 **参数 :**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 该设备的 pipe数据
 |flags|标识|
 | data | byte数据
@@ -1928,13 +1966,13 @@ XlinkCode 常量|int实际值|说明|
 **参数 :**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实例
 | dataPionts | 数据端点
 
 
 type 定义|具体int值|说明
----- | ---- | ----
+----|---------|---------
 DP_TYPE_BOOL|1|布尔值
 DP_TYPE_BYTE|2|byte单字节
 DP_TYPE_SHORT|3|int16 (short)
@@ -1954,12 +1992,12 @@ DP_TYPE_BYTEARRAY|7|byte[]字节数组
 **参数 :**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实例
 | state | 状态
 
 state 定义 | int实际值 |	说明
------|-----|-----
+-----|----------|----------
 DEVICE_CHANGED_CONNECTING|	-1|	设备重新连接中
 DEVICE_CHANGED_OFFLINE|	-2|	设备掉线
 DEVICE_CHANGED_CONNECT_SUCCEED|	-3|	设备重新连接成功
@@ -1974,7 +2012,7 @@ DEVICE_CHANGED_CONNECT_SUCCEED|	-3|	设备重新连接成功
 **参数 :**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | eventNotify | EventNotify对象实例
 
 * EventNotify:
@@ -2000,12 +2038,11 @@ DEVICE_CHANGED_CONNECT_SUCCEED|	-3|	设备重新连接成功
 
 
 
-
-#### 3.2.2 IOS SDK 功能函数
+#### <a name="step3.2.6"> 3.2.6 IOS SDK 功能函数 </a>
 
 	详细错误码可见 XLinkExportObject.h 文件里面的“通用错误码定义”.
 
-##### 1. 启动SDK
+##### <a name="step3.2.6.1"> 1. 启动SDK </a>
 
 ```
 -(int)start
@@ -2022,11 +2059,11 @@ DEVICE_CHANGED_CONNECT_SUCCEED|	-3|	设备重新连接成功
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | 0 | 成功 |
 | 其他 | 失败 |
 
-##### 2. 初始化设备
+##### <a name="step3.2.6.2"> 2. 初始化设备 </a>
 
 ```
 -(int)initDevice:(DeviceEntity*)device;
@@ -2039,19 +2076,19 @@ DEVICE_CHANGED_CONNECT_SUCCEED|	-3|	设备重新连接成功
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 device | 设备实体
 
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 0 | 成功
 其它 | 失败
 
 备注：
 
-##### 3. 连接到云端
+##### <a name="step3.2.6.3"> 3. 连接到云端 </a>
 
 **函数：**
 
@@ -2064,18 +2101,18 @@ device | 设备实体
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | appId | 云端分配的唯一APPID，通过HTTP接口注册获取到。|
 | authStr | 云端分配的唯一APPID对应的AuthKey，通过HTTP接口注册获取到。|
 
 返回值：
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | 0 | 成功 |
 | 其他 | 失败 |
 
-##### 4. 通过产品ID扫描设备
+##### <a name="step3.2.6.4"> 4. 通过产品ID扫描设备 </a>
 
 ```
 -(int)scanByDeviceProductID:(NSString*)productID;
@@ -2086,20 +2123,21 @@ device | 设备实体
 * 通过产品ID扫描本地内网设备
 
 **参数：**
+
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | productID | 产品ID |
 
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | 0 | 成功 |
 | 其他 | 失败 |
 
 > 扫描结果通过onGotDeviceByScan异步返回。
 
-##### 5. 通过本地通讯设置设备授权码
+##### <a name="step3.2.6.5"> 5. 通过本地通讯设置设备授权码 </a>
 
 **函数：**
 
@@ -2114,20 +2152,20 @@ device | 设备实体
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | accessKey | 授权码(9位纯数字) |
 | device | 设备实体 |
 
 ##### 返回值：
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | 0 | 成功 |
 | 其它 | 失败 |
 
 >设置结果通过onSetDeviceAccessKey返回。
 
-##### 5. 通过本地通讯设置设备授权码(v2版本已淘汰)
+##### <a name="step3.2.6.6"> 6. 通过本地通讯设置设备授权码(v2版本已淘汰) </a>
 
 **函数：**
 
@@ -2142,7 +2180,7 @@ device | 设备实体
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实体 |
 | oldAuth | 旧密码，如果设备本身并没有设置授权码的话，该参数置为@"" |
 | newAuth | 新密码 |
@@ -2150,13 +2188,13 @@ device | 设备实体
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | 0 | 成功 |
 | 其它 | 失败 |
 
 >设置结果通过onSetLocalDeviceAuthorizeCode返回。
 
-##### 6. 通过云端设置设备授权码(v2版本已淘汰)
+##### <a name="step3.2.6.7"> 7. 通过云端设置设备授权码(v2版本已淘汰) </a>
 
 **函数：**
 
@@ -2171,7 +2209,7 @@ device | 设备实体
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实体;
 | oldAuth | 旧密码，如果设备本身并没有设置授权码的话，该参数置为@"";
 | newAuth | 新密码; 
@@ -2179,13 +2217,13 @@ device | 设备实体
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 | 0 | 成功; |
 | 其它 | 失败; |
 
 > 设置结果通过onSetDeviceAuthorizeCode返回
 
-##### 7. 获取SUBKEY (v3版本新增)
+##### <a name="step3.2.6.8"> 8. 获取SUBKEY (v3版本新增) </a>
 
 **函数：**
 
@@ -2211,7 +2249,7 @@ device | 设备实体
 
 	如果获取到SUBKEY通过onGotSubKeyWithDevice回调
 
-##### 8. 手动订阅设备
+##### <a name="step3.2.6.9"> 9. 手动订阅设备 </a>
 
 **函数：**
 
@@ -2239,7 +2277,7 @@ device | 设备实体
 	订阅结果通过onSubscription回调
 
 
-##### 9. 连接一个设备
+##### <a name="step3.2.6.10"> 10. 连接一个设备 </a>
 
 **函数：**
 
@@ -2266,7 +2304,7 @@ device | 设备实体
 	连接结果通过onConnectDevice回调
 	连接状态通过onDeviceStatusChanged回调
 
-##### 10.发送本地透传数据
+##### <a name="step3.2.6.11"> 11.发送本地透传数据 </a>
 
 **函数：**
 
@@ -2281,20 +2319,20 @@ device | 设备实体
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 device | 设备实体;
 payload | 数据值，二进制的。
 
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 0 | 成功
 其它 | 失败
 
 > 其发送结果通过onSendLocalPipeData回调返回。
 
-##### 11. 通过云端发送透传数据
+##### <a name="step3.2.6.12"> 12. 通过云端发送透传数据 </a>
 
 **函数：**
 
@@ -2309,19 +2347,20 @@ payload | 数据值，二进制的。
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 device | 设备实体
 payload | 数据值，二进制的
 
 **返回值：**
+
 | 值 | 说明 |
-| --- | --- |
-0 | 成功
-其它 | 失败
+|--------|--------|
+|0 | 成功|
+|其它 | 失败|
 
 > 其发送结果通过onSendLocalPipeData回调返回。
 
-##### 12. 探测云端设备状态
+##### <a name="step3.2.6.13"> 13. 探测云端设备状态 </a>
 
 **函数：**
 
@@ -2336,18 +2375,18 @@ payload | 数据值，二进制的
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
-device ｜ 设备实体
+|--------|--------|
+|device || 设备实体|
 
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 0 | 成功
 其他 | 失败
 >探测结果异步通过onDeviceProbe回调
 
-##### 13. 本地设置数据端点
+##### <a name="step3.2.6.14"> 14. 本地设置数据端点 </a>
 
 **函数：**
 
@@ -2362,18 +2401,18 @@ device ｜ 设备实体
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
-dataPoints ｜ 数据端点列表
-device ｜ 设备实体
+|--------|--------|
+dataPoints | 数据端点列表
+device | 设备实体
 
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 msgID（非0） | 成功
 0 | 失败
 
-##### 14. 云端设置数据端点
+##### <a name="step3.2.6.15"> 15. 云端设置数据端点 </a>
 
 **函数：**
 
@@ -2388,18 +2427,18 @@ msgID（非0） | 成功
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
-dataPoints ｜ 数据端点列表
-device ｜ 设备实体
+|--------|--------|
+dataPoints | 数据端点列表
+device | 设备实体
 
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 msgID（非0） | 成功
 0 | 失败
 
-##### 15. 获取SDK中所有设备列表
+##### <a name="step3.2.6.16"> 16. 获取SDK中所有设备列表 </a>
 
 **函数：**
 
@@ -2418,10 +2457,10 @@ msgID（非0） | 成功
 **返回值：**
 
 | 值 | 说明 |
-| --- | --- |
+|--------|--------|
 NSArray | DeviceEntity * 实体的队列
 
-##### 16. 释放SDK
+##### <a name="step3.2.6.17"> 17. 释放SDK </a>
 
 **函数：**
 
@@ -2441,9 +2480,11 @@ NSArray | DeviceEntity * 实体的队列
 
 * 无
 
-#### 3.2.3 XLinkExportObjectDelegate代理回调说明
-##### 1. onStart
-##### 定义：
+#### <a name="step3.2.7"> 3.2.7 IOS 代理回调说明 </a>
+
+##### <a name="step3.2.7.1"> 1. onStart </a>
+
+**说明：**
 
 ```
 -(void)onStart;
@@ -2457,7 +2498,7 @@ NSArray | DeviceEntity * 实体的队列
 
 * 无
 
-##### 2. onLogin
+##### <a name="step3.2.7.2"> 2. onLogin </a>
 
 **函数：**
 
@@ -2476,12 +2517,12 @@ NSArray | DeviceEntity * 实体的队列
 **result结果：**
 
 | 定义 | 值 | 说明 |
-| --- | --- | --- |
+|--------|--------|--------|
 CODE_SUCCEED| 0 | 登录成功;
 CODE_SERVER_KICK_DISCONNECT | 13 | 被踢下线;
 CODE_STATE_OFFLINE | -101 | 与服务器socket连接断开;
 
-##### 3. onGotDeviceByScan
+##### <a name="step3.2.7.3"> 3. onGotDeviceByScan </a>
 
 **函数：**
 
@@ -2496,12 +2537,12 @@ CODE_STATE_OFFLINE | -101 | 与服务器socket连接断开;
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 device | 设备实体 
 
 > 如果扫描到了多个设备，该回调会多次调用;
 
-##### 4. onSetDeviceAccessKey(v2版本使用)
+##### <a name="step3.2.7.4"> 4. onSetDeviceAccessKey(v2版本开始使用) </a>
 
 **函数：**
 
@@ -2516,12 +2557,12 @@ device | 设备实体
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实体;
 | result | 设置结果;
 | messageID | 消息ID，用于定位消息。APP可以忽略;
 
-##### 4. onSetLocalDeviceAuthorizeCode(v2版本已淘汰)
+##### <a name="step3.2.7.5"> 5. onSetLocalDeviceAuthorizeCode(v2版本已淘汰) </a>
 
 **函数：**
 
@@ -2536,12 +2577,12 @@ device | 设备实体
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实体;
 | result | 设置结果;
 | messageID | 消息ID，用于定位消息。APP可以忽略;
 
-##### 5. onSetDeviceAuthorizeCode(v2版本已淘汰)
+##### <a name="step3.2.7.6"> 6. onSetDeviceAuthorizeCode(v2版本已淘汰) </a>
 
 **函数：**
 
@@ -2554,13 +2595,14 @@ device | 设备实体
 * 云端设置授权结果回调
 
 **参数：**
-| 参数 | 说明 |
-| --- | --- |
-| device | 设备实体
-| result | 设置结果
-| messageID | 消息ID，用于定位消息。APP可以忽略
 
-##### 6. onSendLocalPipeData
+| 参数 | 说明 |
+|--------|--------|
+| device | 设备实体 |
+| result | 设置结果 |
+| messageID | 消息ID，用于定位消息。APP可以忽略 |
+
+##### <a name="step3.2.7.7"> 7. onSendLocalPipeData </a>
 
 **函数：**
 
@@ -2575,12 +2617,12 @@ device | 设备实体
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实体;
 | result | 设置结果;
 | messageID | 消息ID，用于定位消息。APP可以忽略;
 
-##### 7. onSendPipeData
+##### <a name="step3.2.7.8"> 8. onSendPipeData </a>
 
 **函数：**
 
@@ -2595,12 +2637,12 @@ device | 设备实体
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实体;
 | result | 设置结果;
 | messageID | 消息ID，用于定位消息。APP可以忽略;
 
-##### 8. onRecvLocalPipeData
+##### <a name="step3.2.7.9"> 9. onRecvLocalPipeData </a>
 
 **函数：**
 
@@ -2615,11 +2657,11 @@ device | 设备实体
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实体;
 | data | 消息内容;
 
-##### 9. onRecvPipeData
+##### <a name="step3.2.7.10"> 10. onRecvPipeData </a>
 
 **函数：**
 
@@ -2632,12 +2674,13 @@ device | 设备实体
 * 接收到云端设备发送回来的透传数据
 
 **参数：**
+
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实体;
 | data | 消息内容;
 
-##### 10. onRecvPipeSyncData
+##### <a name="step3.2.7.11"> 11. onRecvPipeSyncData </a>
 
 **函数：**
 
@@ -2652,11 +2695,11 @@ device | 设备实体
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实体;
 | data | 消息内容;
 
-##### 11. onDeviceProbe
+##### <a name="step3.2.7.12"> 12. onDeviceProbe </a>
 
 **函数：**
 
@@ -2671,12 +2714,12 @@ device | 设备实体
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实体;
 | result | 设置结果;
 | messageID | 消息ID，用于定位消息。APP可以忽略;
 
-##### 12. onConnectDevice
+##### <a name="step3.2.7.13"> 13. onConnectDevice </a>
 
 **函数：**
 ```
@@ -2689,12 +2732,12 @@ device | 设备实体
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实体;
 | result | 设置结果;
 | messageID | 消息ID，用于定位消息。APP可以忽略;
 
-##### 13. onDeviceStateChanged
+##### <a name="step3.2.7.14"> 14. onDeviceStateChanged </a>
 
 **函数：**
 
@@ -2709,10 +2752,10 @@ device | 设备实体
 **参数：**
 
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实体|
 
-##### 14. onLocalDataPoint2Update
+##### <a name="step3.2.7.15"> 15. onLocalDataPoint2Update </a>
 
 **函数：**
 
@@ -2726,14 +2769,15 @@ device | 设备实体
 * **适用于v3版本**
 
 **参数：**
+
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实体
 | dataPoints | 端点索引列表
 
 > 纯透传APP，该功能用不到；
 
-##### 15. onCloudDataPoint2Update
+##### <a name="step3.2.7.16"> 16. onCloudDataPoint2Update </a>
 
 **函数：**
 
@@ -2747,14 +2791,15 @@ device | 设备实体
 * **适用于v3版本**
 
 **参数：**
+
 | 参数 | 说明 |
-| --- | --- |
+|--------|--------|
 | device | 设备实体
 | dataPoints | 端点索引列表
 
 > 纯透传APP，该功能用不到；
 
-#### <a name="step3.2.5">3.2.5 DeviceEntity属性说明代理回调说明</a>
+#### <a name="step3.2.8">3.2.8 DeviceEntity属性说明代理回调说明</a>
 
 APP开发者只用关心几个属性即可；
 
@@ -2887,7 +2932,7 @@ A: 查看是否已经调用login方法，并SDK进行了OnLogin的成功回调
 **XlinkCode常量列表**
 
 XlinkCode常量|int实际值|说明|使用的函数
----- | ---- | ---- |-----
+----|---------|---------|----------
 SUCCEED|0|调用方法成功|ALL`NO_INIT|-1|未初始化SDK/未调用init(Context mContext)函数|ALL
 NO_HANDSHAKE|-2|未和设备在局域网内连接成功|connectDevice(),setDeviceAuthorizeCode()，setDataPoint()，sendPipeData()
 ERROR_DEVICE|-3|错误的设备（有传入设备参数的方法都有该错误码）|connectDevice(),setDeviceAuthorizeCode()，setDataPoint()，sendPipeData(),subscribeDevice()
@@ -2928,6 +2973,7 @@ CHANGED_UPDATAPOINT_LOCAL|0|内网通道的更新数据端点包channel类型|on
 CHANGED_UPDATAPOINT_CLOUD|1|云端网络通道的更新数据端点包channel类型|onDataPointUpdate(XDevice,List<DataPoint> datapoints, int channel)
 onSubscribeDevice回调|3|未在该企业授权|public void onSubscribeDevice(XDevice xDevice, int i)
 onSubscribeDevice回调|10|设备不在线|public void onSubscribeDevice(XDevice xDevice, int i)
+onSubscribeDevice回调|13|当平台设置只允许单个设备订阅时，设备被订阅后，其它用户再进行订阅就会返回此设备已被订阅的错误码|public void onSubscribeDevice(XDevice xDevice, int i)
 ...	| ... | ... | ...
 
 ## 四、设备分享
@@ -3014,7 +3060,7 @@ Content
 
 
 字段 | 是否必须 | 描述
----- | ---- | ----
+----|---------|---------
 device_id | 是 | 所要分享的设备ID
 user | 否 | 分享给谁；在进行二维码或者邮箱分享的时候，对方ID不确定，只需拿到分享码即可。可以为对方手机号或者邮箱号。
 expire | 是 | 分享请求有效时间，单位秒
@@ -3039,7 +3085,7 @@ Content
  +(void)shareDeviceWithDeviceID:(NSNumber *)deviceID withAccessToken:(NSString *)accessToken withShareAccount:(NSString *)account withExpire:(NSNumber *)expire didLoadData:(MyBlock)block;
  ```
 | 方法名 | shareDeviceWithDeviceID |
-|--------|--------|
+|-------------|-------------|
 | deviceID | 设备ID |
 | accessToken | 调用凭证 |
 | email |被分享的用户的email地址|
@@ -3084,7 +3130,7 @@ Content
 ```
 
 | 参数 | 描述 |
-|--------|--------|
+|-------------|-------------|
 | accessToken | 调用凭证 |
 | inviteCode |邀请码|
 | block |完成后的回调|
@@ -3129,7 +3175,7 @@ Content
 ```
 
 |参数| 描述 |
-|--------|--------|
+|-------------|-------------|
 | inviteCode |邀请码|
 | accessToken | 调用凭证 |
 | block |完成后的回调|
@@ -3159,7 +3205,7 @@ Content
 
 
 字段 | 是否必须 | 描述
----- | ---- | ----
+----|---------|---------
 invite_code | 是 | 分享ID
 reason | 否 | 用户拒绝分享的原因
 
@@ -3179,7 +3225,7 @@ Content
 ```
 
 | 方法名 | denyShareWithInviteCode |
-|--------|--------|
+|-------------|-------------|
 | inviteCode |邀请码|
 | accessToken | 调用凭证 |
 | block |完成后的回调|
@@ -3228,7 +3274,7 @@ Content
     ]
 
 字段 | 是否必须 | 描述
----- | ---- | ----
+----|---------|---------
 invite_code | 是 | 分享ID
 from_id | 是 | 分享者ID，一般都是设备管理员的ID。
 from_user | 是 | 分享者帐号，一般都是设备管理员的ID。
@@ -3245,7 +3291,7 @@ expire_date | 是 | 分享过期时间
 ```
 
 | 方法名 | getShareListWithAccessToken |
-|--------|--------|
+|-------------|-------------|
 | accessToken | 调用凭证 |
 | block |完成后的回调|
 
@@ -3284,7 +3330,7 @@ Content
 ```
 
 | 方法名 | denyShareWithInviteCode |
-|--------|--------|
+|-------------|-------------|
 | inviteCode |邀请码|
 | accessToken | 调用凭证 |
 | block |完成后的回调|
@@ -3295,7 +3341,7 @@ Content
 
 
 |分享方式|类型|说明|
-|--------|--------|--------|
+|-------------|-------------|-------------|
 |app|string|通过用户ID分享|
 |qrcode|string|二维码方式分享|
 |email|string|邮件方式分享|
@@ -3310,7 +3356,7 @@ Content
 
 ##五、<a name="Glossary">术语表</a>
 | 术语 | 解释 |
-|--------|--------|
+|-------------|-------------|
 |产品|即企业要开发、生产、销售的一款设备，对应到企业管理后台的产品管理|
 |设备|设备是产品的实体，这里特指直接接入云智易平台的智能设备，如网关，插座，灯泡|
 |子设备|间接接入云智易平台的设备，如通过网关接入的温度传感器|
@@ -3325,8 +3371,7 @@ Content
 |AccessKey|用于内网通信的安全凭证，由APP设置|
 |subKey|用于App订阅设备的安全凭证，在设备端生成|
 
-
-##六、<a name="changeList">修改记录</a>
+##<a name="history"> 六、 更新历史 </a>
 
 ####Android:
 
@@ -3334,3 +3379,12 @@ Content
 
     1.添加订阅设备返回错误码3表示设备未在该企业授权的错误码描述。
     2.添加初始化SDK、设置监听器不能再子线程操作的描述。
+    
+    
+####IOS
+
+2016.9.26: 添加Json转DeviceEntity方法描述以及手动获取SubKey的方法
+
+     1. 增加IOS JSON转DeviceEntity的方法描述 
+     2.增加IOS调用函数与回调的引导目录 
+     3.增加IOS手动获取SUBKEY方法 
