@@ -38,7 +38,7 @@
 		- [4.4.7、附录](#4.4.7、附录)
 	- [4.5、注意事项](#4.5、注意事项)
 - [五、术语表](#Glossary)
-
+- [六、修改记录](#changeList)
 
 ## 一、<a name="Introduction">简介</a>
 
@@ -675,7 +675,6 @@ SDK
        -  [数据端点更新回调 onDataPointUpdate(XDevice xDevice, List < DataPiont > dataPionts)](#onDataPointUpdate)
        -  [设备状态改变回调 onDeviceStateChanged(XDevice xdevice, int state)](#onDeviceStateChanged)
        -  [设备、云端通知和告警回调 onEventNotify(EventNotify eventNotify)](#onEventNotify)
-   -    [3.2.5 subscribeDevice 回调说明](#step3.2.5)
 - [3.3 常见问题](#step3.3)
 - [3.4 附录](#step3.4)
 
@@ -1998,23 +1997,6 @@ DEVICE_CHANGED_CONNECT_SUCCEED|	-3|	设备重新连接成功
 
   * 当 messageType=1 or 2 时,
      * notifyData: 前2个字节为字符串长度,后面的所有数据为UTF8格式的字符串
-
-#### <a name="step3.2.5">3.2.5 subscribeDevice 回调说明</a>
-#####回调方法：public void onSubscribeDevice(XDevice xDevice, int code)
-
-**参数 :**
-
-| 参数 | 说明 |
-| --- | --- |
-| xDevice | 设备对象
-|code |返回码（详细见下）|
-
-**返回码说明 :**
-| 返回码 | 说明 |
-|0|订阅成功|
-|3|设备未在该企业授权|
-|10|设备不在线|
-
 
 
 
@@ -3342,3 +3324,10 @@ Content
 |设备管理员|设备管理员可以分享设备、取消他人的订阅关系等。 平台默认第一个订阅设备的用户为管理员|
 |AccessKey|用于内网通信的安全凭证，由APP设置|
 |subKey|用于App订阅设备的安全凭证，在设备端生成|
+
+
+##六、<a name="changeList">修改记录</a>
+
+####Android:
+    1.添加订阅设备返回错误码3表示设备未在该企业授权的错误码描述。
+    2.添加初始化SDK、设置监听器不能再子线程操作的描述。
