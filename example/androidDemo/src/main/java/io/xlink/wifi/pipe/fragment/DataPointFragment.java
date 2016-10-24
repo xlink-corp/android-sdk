@@ -123,6 +123,21 @@ public class DataPointFragment extends BaseFragment implements OnClickListener {
         switch (v.getId()) {
             case R.id.btn_cmd:
 
+//                DataPoint dataPoint=new DataPoint(7, XlinkCode.DP_TYPE_BYTEARRAY);
+//                byte[] datas=new byte[]{0x75,0x10,0x40};
+//                dataPoint.setValueOfByteArray(datas);
+//                List<DataPoint> dataPoints = new ArrayList<DataPoint>();
+//                dataPoints.add(dataPoint);
+//                XlinkAgent.getInstance().setDataPoint(((DeviceActivity) getActivity()).device.getXDevice(), dataPoints, new SetDataPointListener() {
+//                    @Override
+//                    public void onSetDataPoint(XDevice xdevice, int code, int messageId) {
+//                        if (code == XlinkCode.SUCCEED) {
+//                            XlinkUtils.shortTips("设置数据端点成功");
+//                        } else {
+//                            XlinkUtils.shortTips("设置数据端点失败：" + code);
+//                        }
+//                    }
+//                });
                 break;
             default:
                 break;

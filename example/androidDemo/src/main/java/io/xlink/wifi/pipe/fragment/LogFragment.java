@@ -158,11 +158,38 @@ public class LogFragment extends BaseFragment implements OnClickListener,
             }
         }
     };
+
+    //测试代码
+//    private boolean openHandler=false;
+//    private byte num;
+//
+//    private Runnable runnable=new Runnable() {
+//        @Override
+//        public void run() {
+//            num++;
+//            if(num>0xff)
+//                num=0;
+//            byte[] data1=new byte[]{(byte)0xaa,0x01,(byte)0x80,0x00,0x0a,0x00,0x4c,(byte)0xAC,(byte)0xCF,0x23,(byte)0x9C,0x0D,(byte)0xA6,(byte)0xB0,0x55};
+//            byte[] data2=new byte[]{(byte)0xAA,0x02,(byte)0x80,0x00,0x0A,0x00,0x4D,(byte)0xAC,(byte)0xCF,0x23,(byte)0x9C,0x0D,(byte)0xA6,(byte)0xB2,0x55};
+////            byte[] data=new byte[]{(byte)38,30,30,30,30,30,num,35,35,35,35,35,35,35,55};
+//            ((DeviceActivity) getActivity()).sendData(data1, "ceshi");
+//            ((DeviceActivity) getActivity()).sendData(data2, "ceshi");
+//            handler.postDelayed(runnable,200);
+//        }
+//    };
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_cmd:
                 ((DeviceActivity) getActivity()).openCmdFg();
+//               测试代码
+//                openHandler=!openHandler;
+//                if(openHandler){
+//                    handler.postDelayed(runnable,100);
+//                }else{
+//                    handler.removeCallbacks(runnable);
+//                }
+
                 break;
             default:
                 break;

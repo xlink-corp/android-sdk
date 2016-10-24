@@ -54,8 +54,13 @@ public class MyApp extends Application implements XlinkNetListener {
         CrashHandler.init(this);
         // 初始化sdk
         XlinkAgent.init(this);
-        XlinkAgent.setCMServer("cm.xlink.cn", 23778);
+//        XlinkAgent.setCMServer("cm.iotbull.com", 23778);
+//        XlinkAgent.setCMServer("42.121.122.23", 23778);
+//        XlinkAgent.setCMServer("114.55.119.222",23778);
+        XlinkAgent.setCMServer("cm2.xlink.cn", 23778);
         XlinkAgent.getInstance().addXlinkListener(this);
+        //优先内网连接(谨慎使用,如果优先内网,则外网会在内网连接成功或者失败,或者超时后再进行连接,可能会比较慢)
+//        XlinkAgent.getInstance().setPreInnerServiceMode(true);
         // 首选项 用于存储用户
         sharedPreferences = getSharedPreferences("XlinkOfficiaDemo", Context.MODE_PRIVATE);
         appid = SharedPreferencesUtil.queryIntValue(Constant.SAVE_appId);
@@ -210,7 +215,7 @@ public class MyApp extends Application implements XlinkNetListener {
      * 收到 局域网设备推送的pipe数据
      */
     @Override
-    public void onRecvPipeData(XDevice xdevice,  byte[] data) {
+    public void onRecvPipeData(short messageId,XDevice xdevice,  byte[] data) {
         // TODO Auto-generated method stub
         Log.e(TAG, "onRecvPipeData::device:" + xdevice.toString() + "data:"
                 + data);
@@ -227,7 +232,7 @@ public class MyApp extends Application implements XlinkNetListener {
      * 收到设备通过云端服务器推送的pipe数据
      */
     @Override
-    public void onRecvPipeSyncData(XDevice xdevice,  byte[] data) {
+    public void onRecvPipeSyncData(short messageId,XDevice xdevice,  byte[] data) {
         // TODO Auto-generated method stub
         Log.e(TAG, "onRecvPipeSyncData::device:" + xdevice.toString() + "data:"
                 + data);

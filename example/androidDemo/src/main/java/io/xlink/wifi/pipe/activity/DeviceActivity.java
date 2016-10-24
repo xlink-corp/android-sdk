@@ -19,6 +19,7 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.Header;
 
@@ -137,7 +138,7 @@ public class DeviceActivity extends FragmentActivity implements OnClickListener 
             });
         }
 
-        //int ret = XlinkAgent.getInstance().connectDevice(device.getXDevice(), device.getPassword(), connectDeviceListener);
+//        int ret = XlinkAgent.getInstance().connectDevice(device.getXDevice(), device.getXDevice().getAccessKey(), connectDeviceListener);
         int ret = XlinkAgent.getInstance().connectDevice(device.getXDevice(), device.getXDevice().getAccessKey(), device.getXDevice().getSubKey(), connectDeviceListener);
         if (ret < 0) {// 调用设备失败
             if (dialog != null) {
@@ -721,6 +722,7 @@ public class DeviceActivity extends FragmentActivity implements OnClickListener 
             case R.id.header_back_ll:
                 back();
                 // startActivity(new Intent(this, DeviceListActivity.class));
+//                XlinkAgent.getInstance().sendProbe(device.getXDevice());
                 break;
             default:
                 break;

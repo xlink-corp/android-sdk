@@ -19,7 +19,7 @@
         android:layout_alignParentBottom="true"
         android:background="#3abae4"
         android:text="设置全部端点"
-        android:visibility="gone"
+        android:visibility="visible"
         android:textColor="@color/white" />
 
 
