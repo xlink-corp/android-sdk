@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "23.0.2"
+    buildToolsVersion '23.0.3'
 
     defaultConfig {
         applicationId "io.xlink.wifi.pipe.v3"
@@ -21,8 +21,10 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:18.0.0'
+    compile 'com.android.support:support-v4:22.0.0'
     compile files('libs/android-async-http-1.4.6.jar')
     compile 'com.google.code.gson:gson:2.4'
+    compile 'org.apache.httpcomponents:httpcore:4.4.3'
 //    compile project(':xlinkwifiofficialsdk')
+    compile files('libs/xlink-wifi-official-sdk-v3-21540.jar')
 }
