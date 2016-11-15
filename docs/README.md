@@ -671,8 +671,8 @@ SDK
 		- [外网连接回调 onLogin(int code)](#onLogin)
 		- [SDK断开连接回调 onDisconnect(int code)](#onDisconnect)
 		- [SDK本地连接断开回调 onLocalDisconnect(int code)](#onLocalDisconnect)
-		- [SDK 透传数据回调 onRecvPipeData(XDevice device, byte flags, byte[] data)](#onRecvPipeData) 
-		- [SDK 云端透传数据 onRecvPipeSyncData(XDevice device, byte flags, byte[] data)](#onRecvPipeSyncData)
+		- [SDK 透传数据回调 onRecvPipeData(short messageId,XDevice device,  byte[] data)](#onRecvPipeData) 
+		- [SDK 云端透传数据 onRecvPipeSyncData(short messageId,XDevice device, byte[] data)](#onRecvPipeSyncData)
 		- [数据端点更新回调 onDataPointUpdate(XDevice xDevice, List < DataPiont > dataPionts)](#onDataPointUpdate)
 		- [设备状态改变回调 onDeviceStateChanged(XDevice xdevice, int state)](#onDeviceStateChanged)
 		- [设备、云端通知和告警回调 onEventNotify(EventNotify eventNotify)](#onEventNotify)
@@ -1928,7 +1928,7 @@ XlinkCode 常量|int实际值|说明|
 | `LOCAL_SERVICE_KILL` | -2 | XlinkUdpServrce服务被异常杀死（如360等安全软件),需要重新调用start函数。 |
 | ... | ... | ... |
 
-##### <a name="onRecvPipeData">onRecvPipeData(XDevice device, byte flags, byte[] data)</a>
+##### <a name="onRecvPipeData">onRecvPipeData(short messageId,XDevice device, byte[] data)</a>
 
 **方法说明：**
 
@@ -1938,11 +1938,11 @@ XlinkCode 常量|int实际值|说明|
 
 | 参数 | 说明 |
 |--------|--------|
+| messageId | 消息Id
 | device | 设备实体
-|flags|标识|
 | data | byte数据
 
-##### <a name="onRecvPipeSyncData">onRecvPipeSyncData(XDevice device, byte flags, byte[] data)</a>
+##### <a name="onRecvPipeSyncData">onRecvPipeSyncData(short messageId,XDevice device, byte[] data)</a>
 
 **方法说明：**
 
@@ -1952,8 +1952,8 @@ XlinkCode 常量|int实际值|说明|
 
 | 参数 | 说明 |
 |--------|--------|
+| messageId | 消息Id
 | device | 该设备的 pipe数据
-|flags|标识|
 | data | byte数据
 
 ##### <a name="onDataPointUpdate">onDataPointUpdate(XDevice xDevice, List < DataPiont > dataPionts)</a>
@@ -3379,6 +3379,9 @@ Content
 
     1.添加订阅设备返回错误码3表示设备未在该企业授权的错误码描述。
     2.添加初始化SDK、设置监听器不能再子线程操作的描述。
+    
+2016-10-8：添加pipe数据接收时回调消息ID,在之前的版本如v2,参数是不一样的，所以更新SDK时需要修改接口函数方法才能正常使用
+ 
     
     
 ####IOS
