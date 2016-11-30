@@ -637,6 +637,7 @@ SDK
 		- [int login(int user_id, String app_key)](#login)
 		- [void setPreInnerServiceMode(boolean pre)](#setPreInnerServiceMode)
 		- [boolean initDevice(XDevice device)](#initDevice)
+		- [void setTcpType(int type)](#setTcpType)
 		- [void setSSL(String KeystorepathTrust, String password)](#setSSL)
 		- [XDevice JsonToDevice(JSONObject jsonObject)](#JsonToDevice)
 		- [JSONObject   deviceToJson(XDevice device)](#deviceToJson)
@@ -926,6 +927,19 @@ _ _ _
 |false | 添加设备失败，设备属性错误
 
 
+- - -
+
+#####<a name="setTcpType">void setTcpType(int type)</a>
+
+**方法说明：**
+
+* 设置TCP连接方式
+* XlinkProperty.TCP_TYPE_SSL = 4;设置tcp连接类型为 SSL连接
+* XlinkProperty.TCP_TYPE_HTTP = 3;设置tcp连接类型为 http端口连接
+* XlinkProperty.TCP_TYPE_NORMAL = 2;设置tcp连接类型为 默认连接
+* XlinkProperty.TCP_TYPE_AUTO = 1;设置tcp连接类型为 auto
+
+该方法默认为XlinkProperty.TCP_TYPE_AUTO,一般非私有云是无需设置的。
 _ _ _
 
 ##### <a name="setSSL">void setSSL(String KeystorepathTrust, String password)</a>
@@ -934,6 +948,7 @@ _ _ _
 
 * 设置SSL的安全证书的的秘钥库和密码
 * 如果连接中使用到SSL,那么需要提供对应的秘钥进行验证，默认是放在assets下面，如果需要主动设置SSL秘钥文件名称及密码，则可以调用该方法进行设置
+* 如果TCP连接使用SSL进行连接，那么需要在SDK初始化之后，调用此方法之前调用 XlinkAgent.setTcpType(XlinkProperty.TCP_TYPE_SSL)来设置通过SSL进行连接，否则，SDK还是会使用默认的连接方式进行连接
 
 **参数：**
 
