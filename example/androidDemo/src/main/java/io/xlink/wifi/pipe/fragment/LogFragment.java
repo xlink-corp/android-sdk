@@ -223,7 +223,7 @@ public class LogFragment extends BaseFragment implements OnClickListener,
     }
 
     public void showDialog(String tips,
-                           android.content.DialogInterface.OnClickListener clickListener) {
+                           DialogInterface.OnClickListener clickListener) {
         Builder builder = new Builder(getActivity());
         builder.setCancelable(false);
         builder.setMessage(tips);

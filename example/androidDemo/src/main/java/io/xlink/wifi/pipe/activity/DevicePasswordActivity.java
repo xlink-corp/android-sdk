@@ -66,7 +66,7 @@ public class DevicePasswordActivity extends BaseActivity implements
 
         } else {
             tv_device_password_title.setText("请输入设备初始化授权码");
-            tv_device_password_content.setText("为设备创建访问授权码，密码小于900000000，请牢记您的密码。");
+            tv_device_password_content.setText("为设备创建访问授权码，密码小于999999999，请牢记您的密码。");
         }
 
         b_device_password_next.setOnClickListener(this);
@@ -81,12 +81,12 @@ public class DevicePasswordActivity extends BaseActivity implements
             int accessKey = -1;
             try {
                 accessKey = Integer.parseInt(password);
-            } catch (Exception e) {
-                XlinkUtils.shortTips("请输入设备密码，密码小于900000000");
+            } catch (NumberFormatException e) {
+                XlinkUtils.shortTips("请输入整型的设备密码，密码小于999999999");
                 return;
             }
-            if ((accessKey > 900000000) || (accessKey <= 0)) {
-                XlinkUtils.shortTips("请输入设备密码，密码大于0.小于900000000");
+            if ((accessKey > 999999999) || (accessKey <= 0)) {
+                XlinkUtils.shortTips("请输入设备密码，密码大于0.小于999999999");
                 return;
             }
 

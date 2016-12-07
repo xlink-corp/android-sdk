@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.Toast;
 
 import org.apache.http.Header;
 
@@ -40,6 +41,7 @@ import io.xlink.wifi.sdk.XDevice;
 import io.xlink.wifi.sdk.XlinkAgent;
 import io.xlink.wifi.sdk.XlinkCode;
 import io.xlink.wifi.sdk.listener.ConnectDeviceListener;
+import io.xlink.wifi.sdk.listener.RenameDeviceListener;
 import io.xlink.wifi.sdk.listener.ScanDeviceListener;
 import io.xlink.wifi.sdk.util.MyLog;
 
@@ -140,14 +142,14 @@ public class DeviceListActivity extends BaseActivity implements
                                                    View view, final int position, long id) {
                         // 弹出警告框
 
-                        AlertDialog.Builder builder = new Builder(
+                        Builder builder = new Builder(
                                 DeviceListActivity.this);
                         builder.setCancelable(false);
                         builder.setMessage("确定删除此设备吗？");
                         builder.setTitle("提示");
                         builder.setNegativeButton(
                                 "确定",
-                                new android.content.DialogInterface.OnClickListener() {
+                                new DialogInterface.OnClickListener() {
 
                                     @Override
                                     public void onClick(DialogInterface dialog,
@@ -241,7 +243,7 @@ public class DeviceListActivity extends BaseActivity implements
     };
 
     @Override
-    protected void onNewIntent(android.content.Intent intent) {
+    protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log("----onNewIntent()");
         MyApp.getApp().auth = true;
@@ -336,7 +338,7 @@ public class DeviceListActivity extends BaseActivity implements
         edit_company_id.setText(HttpManage.COMPANY_ID);
         edit_passwd.setText(SharedPreferencesUtil.queryValue(Constant.SAVE_PASSWORD_ID));
         edit_email.setText(SharedPreferencesUtil.queryValue(Constant.SAVE_EMAIL_ID));
-        new AlertDialog.Builder(this).setView(view)
+        new Builder(this).setView(view)
                 .setNegativeButton("保存", new DialogInterface.OnClickListener() {
 
                     @Override
@@ -387,7 +389,7 @@ public class DeviceListActivity extends BaseActivity implements
         final ClearableEditText editText = (ClearableEditText) view.findViewById(R.id.edit_pid);
         editText.setKeyListener(numberKeyListener);
         editText.setText(Constant.PRODUCTID);
-        new AlertDialog.Builder(this).setView(view)
+        new Builder(this).setView(view)
                 .setNeutralButton("取消", null)
                 .setNegativeButton("保存", new DialogInterface.OnClickListener() {
 
@@ -459,7 +461,7 @@ public class DeviceListActivity extends BaseActivity implements
         builder.setMessage(tips);
         builder.setTitle("提示");
         builder.setNegativeButton("确定",
-                new android.content.DialogInterface.OnClickListener() {
+                new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

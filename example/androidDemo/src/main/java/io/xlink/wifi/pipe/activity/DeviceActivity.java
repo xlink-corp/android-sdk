@@ -1,8 +1,10 @@
 package io.xlink.wifi.pipe.activity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -45,6 +48,7 @@ import io.xlink.wifi.sdk.XlinkCode;
 import io.xlink.wifi.sdk.bean.DataPoint;
 import io.xlink.wifi.sdk.listener.ConnectDeviceListener;
 import io.xlink.wifi.sdk.listener.GetSubscribeKeyListener;
+import io.xlink.wifi.sdk.listener.RenameDeviceListener;
 import io.xlink.wifi.sdk.listener.SendPipeListener;
 import io.xlink.wifi.sdk.listener.SubscribeDeviceListener;
 import io.xlink.wifi.sdk.util.MyLog;
@@ -524,6 +528,8 @@ public class DeviceActivity extends FragmentActivity implements OnClickListener 
         // TODO Auto-generated method stub
         super.onResume();
         // Log("onResume");
+        device=DeviceManage.getInstance().getDevice(device.getXDevice().getDeviceId());
+        headertitle.setText(device.getMacAddress()+"("+device.getXDevice().getDeviceName()+")");
         MyApp.getApp().setCurrentActivity(this);
         if (device.getAccessKey() > 0) {
             if (!isOnline && isAuthConnect) {
@@ -590,7 +596,8 @@ public class DeviceActivity extends FragmentActivity implements OnClickListener 
                 b.getString(Constant.DEVICE_MAC));
         XlinkAgent.getInstance().initDevice(device.getXDevice());
 
-        headertitle.setText(device.getMacAddress());
+        headertitle.setText(device.getMacAddress()+"("+device.getXDevice().getDeviceName()+")");
+        headertitle.setOnClickListener(this);
 
         mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         //测试使用. 实际不需要每次都订阅
@@ -723,6 +730,47 @@ public class DeviceActivity extends FragmentActivity implements OnClickListener 
                 back();
                 // startActivity(new Intent(this, DeviceListActivity.class));
 //                XlinkAgent.getInstance().sendProbe(device.getXDevice());
+                break;
+            case R.id.header_title:
+
+                Intent intent=new Intent(this,DeviceDetailInfoActivity.class);
+                intent.putExtra(DeviceDetailInfoActivity.BUNDLE_DEVICE,device);
+                startActivity(intent);
+//                AlertDialog.Builder builder = new AlertDialog.Builder(
+//                                DeviceActivity.this);
+//                        builder.setCancelable(false);
+//                        final EditText nameText=new EditText(DeviceActivity.this);
+//                        builder.setView(nameText);
+////                        builder.setMessage("确定删除此设备吗？");
+//                        builder.setTitle("重命名");
+//                        builder.setNegativeButton(
+//                                "确定",
+//                                new DialogInterface.OnClickListener() {
+//
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog,
+//                                                        int which) {
+//
+//                                         int result=XlinkAgent.getInstance().renameDevice(device.getXDevice(), nameText.getText().toString(), new RenameDeviceListener() {
+//                                             @Override
+//                                             public void onRenameResponse(XDevice device, int code) {
+//                                                 if(code==XlinkCode.SUCCEED){
+//                                                     device.setDeviceName(nameText.getText().toString());
+//                                                     Toast.makeText(DeviceActivity.this,"设备重命名成功",Toast.LENGTH_LONG).show();
+//                                                     headertitle.setText(device.getMacAddress()+"("+nameText.getText().toString()+")");
+//                                                     DeviceManage.getInstance().updateDevice(device);
+//                                                 }else{
+//                                                     Toast.makeText(DeviceActivity.this,"设备重命名失败,错误码->"+code,Toast.LENGTH_LONG).show();
+//                                                 }
+//                                             }
+//                                         });
+//                                        if(result<0){
+//                                            Toast.makeText(DeviceActivity.this,"设备重命名失败,错误码->"+result,Toast.LENGTH_LONG).show();
+//                                        }
+//                                    }
+//                                });
+//                        builder.setNeutralButton("取消", null);
+//                        builder.create().show();
                 break;
             default:
                 break;

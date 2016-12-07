@@ -5,12 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -76,6 +78,7 @@ public class DataPointListAdapter extends BaseAdapter {
             LinearLayout layout_string = (LinearLayout) convertView.findViewById(R.id.layout_string);
             LinearLayout layout_int = (LinearLayout) convertView.findViewById(R.id.layout_int);
             LinearLayout layout_bool = (LinearLayout) convertView.findViewById(R.id.layout_bool);
+            LinearLayout layout_float=(LinearLayout)convertView.findViewById(R.id.layout_float);
 
             final EditText value = (EditText) convertView.findViewById(R.id.value);
             final TextView tv_text = (TextView) convertView.findViewById(R.id.tv_text);
@@ -84,6 +87,8 @@ public class DataPointListAdapter extends BaseAdapter {
             RadioButton cb_flase = (RadioButton) convertView.findViewById(R.id.cb_flase);
             RadioGroup radio_group = (RadioGroup) convertView.findViewById(R.id.radio_group);
             TextView btSetting = (TextView) convertView.findViewById(R.id.bt_setting);
+            final EditText float_text=(EditText)convertView.findViewById(R.id.float_text);
+            TextView floatButton=(TextView)convertView.findViewById(R.id.floatButton);
 
             layout_bool.setVisibility(View.GONE);
             layout_int.setVisibility(View.GONE);
@@ -131,14 +136,32 @@ public class DataPointListAdapter extends BaseAdapter {
                     seekbar.setProgress((int) dataPoint.getValueOfUnsigned() - dataPoint.getMin());
                     tv_text.setText(dataPoint.getValueOfUnsigned() + "");
                     break;
-//                case XlinkCode.DP_TYPE_FLOAT:
-//                    layout_int.setVisibility(View.VISIBLE);
-//                    break;
+                case XlinkCode.DP_TYPE_FLOAT:
+                    layout_float.setVisibility(View.VISIBLE);
+                    float_text.setText(((float)dataPoint.getValue())+"");
+
+                    break;
                 case XlinkCode.DP_TYPE_STRING:
                     layout_string.setVisibility(View.VISIBLE);
                     value.setText(dataPoint.getValue() + "");
                     break;
             }
+
+            floatButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        float value = Float.parseFloat(float_text.getText().toString());
+                        dataPoint.setValue(value);
+                        onItemClickListener.onSettingClick(position, dataPoint);
+                    }catch (NumberFormatException e){
+                        e.printStackTrace();
+                        Toast.makeText(mContext,"输入的数据有误",Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                }
+            });
 
             seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override

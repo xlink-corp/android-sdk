@@ -105,6 +105,34 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layout_float"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/float_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:inputType="numberDecimal"/>
+
+        <TextView
+            android:id="@+id/floatButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/num_selector"
+            android:textColor="@android:color/white"
+            android:layout_margin="1dp"
+            android:padding="8dp"
+            android:text="设置"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/layout_bool"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

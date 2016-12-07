@@ -17,7 +17,7 @@ import android.os.Environment;
 
 public class CrashHandler implements UncaughtExceptionHandler {
 
-    private Thread.UncaughtExceptionHandler handler;
+    private UncaughtExceptionHandler handler;
 
     private static CrashHandler crashHandler;
 

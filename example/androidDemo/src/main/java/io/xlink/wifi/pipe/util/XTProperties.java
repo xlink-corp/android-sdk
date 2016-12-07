@@ -164,7 +164,7 @@ public class XTProperties implements Map<String, String> {
     }
 
     @Override
-    public Set<Map.Entry<String, String>> entrySet() {
+    public Set<Entry<String, String>> entrySet() {
 	return Collections.unmodifiableSet(properties.entrySet());
     }
 
@@ -224,7 +224,7 @@ public class XTProperties implements Map<String, String> {
 
     @Override
     public void putAll(Map<? extends String, ? extends String> t) {
-	for (Map.Entry<? extends String, ? extends String> entry : t.entrySet()) {
+	for (Entry<? extends String, ? extends String> entry : t.entrySet()) {
 	    put(entry.getKey(), entry.getValue());
 	}
     }

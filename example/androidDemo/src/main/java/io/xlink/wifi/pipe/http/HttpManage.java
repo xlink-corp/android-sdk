@@ -24,7 +24,7 @@ public class HttpManage {
     private static HttpManage instance;
 
     public static String COMPANY_ID = "";
-//    private final String host = "http://api-test.xlink.cn:8887";
+//    private final String host = "http://api-test.xlink.cn:8887";//测试服务器地址
     private final String host = "http://api2.xlink.cn";
 //    private final String host="http://139.224.7.17";
     // url

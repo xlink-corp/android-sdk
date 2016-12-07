@@ -63,8 +63,7 @@ public class DeviceListAdapter extends BaseAdapter {
 		R.id.device_text);
 	byte[] bsmac = XlinkUtils.stringToByteArray(device.getMacAddress());
 	device.mac = XlinkUtils.getHexBinString(bsmac, ":");
-	String msg = "设备:  " + device.mac + " ("
-		+ device.getXDevice().getDeviceId() + ")";
+	String msg = "设备:  " + device.mac + " ("+device.getXDevice().getDeviceName()+")";
 	textView.setText(msg);
 
 	return convertView;

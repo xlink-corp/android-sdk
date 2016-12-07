@@ -39,7 +39,7 @@ public class CustomDialog extends Dialog {
     }
 
     public static CustomDialog createErrorDialog(Context context, String title,
-	    String msg, android.view.View.OnClickListener listener) {
+	    String msg, View.OnClickListener listener) {
 	Resources resources = context.getResources();
 	DisplayMetrics dm = resources.getDisplayMetrics();
 	int w = (int) (dm.widthPixels * 0.85);
@@ -50,7 +50,7 @@ public class CustomDialog extends Dialog {
 	TextView msg_tv = (TextView) dialog.findViewById(R.id.dialog_msg);
 	if (listener == null) {
 	    dialog.findViewById(R.id.dialog_cancel).setOnClickListener(
-		    new android.view.View.OnClickListener() {
+		    new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {

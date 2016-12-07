@@ -101,7 +101,7 @@ public class RequestParams {
      * @return
      */
     public String getGetRequsetUrl() {
-	Set<Map.Entry<String, Object>> entryKeys = param.entrySet();
+	Set<Entry<String, Object>> entryKeys = param.entrySet();
 
 	if (entryKeys.isEmpty()) {
 	    return "";

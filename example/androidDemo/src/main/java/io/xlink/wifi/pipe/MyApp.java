@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +19,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
 
+import io.xlink.wifi.pipe.activity.NotifyEventInfoActivity;
 import io.xlink.wifi.pipe.bean.Device;
 import io.xlink.wifi.pipe.http.HttpManage;
 import io.xlink.wifi.pipe.manage.DeviceManage;
@@ -55,9 +57,9 @@ public class MyApp extends Application implements XlinkNetListener {
         // 初始化sdk
         XlinkAgent.init(this);
 //        XlinkAgent.setCMServer("cm.iotbull.com", 23778);
-//        XlinkAgent.setCMServer("42.121.122.23", 23778);
+//        XlinkAgent.setCMServer("42.121.122.23", 23778);//测试服务器地址
 //        XlinkAgent.setCMServer("114.55.119.222",23778);
-        XlinkAgent.setCMServer("cm2.xlink.cn", 23778);
+        XlinkAgent.setCMServer("cm2.xlink.cn", 23778);//正式平台地址
         XlinkAgent.getInstance().addXlinkListener(this);
         //优先内网连接(谨慎使用,如果优先内网,则外网会在内网连接成功或者失败,或者超时后再进行连接,可能会比较慢)
 //        XlinkAgent.getInstance().setPreInnerServiceMode(true);
@@ -319,6 +321,10 @@ public class MyApp extends Application implements XlinkNetListener {
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentText(str);
         Notification notify = mBuilder.build();
+        Intent intent=new Intent(this, NotifyEventInfoActivity.class);
+        intent.putExtra(NotifyEventInfoActivity.NOTIFY_BUNDLE,eventNotify);
+        PendingIntent pendingIntent=PendingIntent.getActivities(getApplicationContext(),0,new Intent[]{intent},0);
+        notify.contentIntent=pendingIntent;
 
         notify.flags = Notification.FLAG_AUTO_CANCEL;
         NotificationManager mNotificationManager = (NotificationManager) MyApp.getApp().getSystemService(Context.NOTIFICATION_SERVICE);
