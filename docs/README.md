@@ -667,6 +667,7 @@ SDK
 		- [本地列表移除所有设备 int removeAllDevice()](#removeAllDevice)
 		- [向设备发送透传数据 int sendPipeData(XDevice device, byte[] data, SendPipeListener listener)](#sendPipeData1)
 		- [向设备发送透传数据 int sendPipeData(XDevice device, byte[] data, int timeOut,SendPipeListener listener)](#sendPipeData2)
+		- [设备重命名 int renameDevice(XDevice xdevice,String deviceName,RenameDeviceListener baseListener)](#renameDevice)
 	- [3.2.4 XlinkNetListener 回调说明](#step3.2.4)
 		- [内网连接回调 onStart(int code)](#onStart) 
 		- [外网连接回调 onLogin(int code)](#onLogin)
@@ -1876,6 +1877,35 @@ _ _ _
 **结果回调：**
 
 		SendPipeCallbackListener.onSendPipeData(XDevice device, int code, int messageId)
+		
+		
+#### <a name="renameDevice">设备重命名</a>
+#####int renameDevice(XDevice xdevice,String deviceName,RenameDeviceListener baseListener)
+
+**方法说明：**
+
+* 修改设备的名称
+
+**参数：**
+
+| 参数 | 说明 |
+|--------|--------|
+| xdevice | Device实体对象
+| deviceName |设备名称，限制最长16个字节
+| baseListener |重命名结果回调
+
+**返回值：**
+
+|对应的XlinkCode常量| 值 | 说明 |
+|--------|--------|---------|
+|`SUCCEED`|  0 | 调用成功；
+|NO_CONNECT_SERVER|-4|服务未启动
+|NO_DEVICE|-6|未找到设备
+|`NO_CONNECT_SERVER`| -8 |参数有误
+|INVALID_DEVICE_ID|-9|无效的设备id
+| `NETWORD_UNAVAILABLE`|-10|当前网络不可用
+| 其它| < 0 | app本地错误;详情参见同步错误码;
+
 
 #### <a name="step3.2.4">3.2.4 XlinkNetListener 回调说明</a>
 
@@ -3398,6 +3428,8 @@ Content
 2016-10-8：添加pipe数据接收时回调消息ID,在之前的版本如v2,参数是不一样的，所以更新SDK时需要修改接口函数方法才能正常使用
 
 2016-12-7：添加float类型的数据端点的支持
+
+2016-12-13：添加设备重命名的方法
  
     
     
