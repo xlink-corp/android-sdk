@@ -163,20 +163,20 @@
 1. 在AndroidManifest.xml文件中application 标签下配置添加：
 
 	**Android 代码范例**
-	
+
 	```
 		<!-- XLINK 内网服务 -->
 		<service android:name="io.xlink.wifi.sdk.XlinkUdpService" />
 		<!-- XLINK 公网服务 -->
 		<service android:name="io.xlink.wifi.sdk.XlinkTcpService" />
-		
+
 		注意：如果缺少以上配置会造成sdk服务不能正常启动
 	```
 
 2. 添加sdk所需要权限
 
 	**Android 代码范例**
-		
+
 	```
 		<!-- 联网权限 -->
 		<uses-permission android:name="android.permission.INTERNET" />
@@ -191,7 +191,7 @@
 3. 创建自定义Application 实现XlinkNetListener接口，并在AndroidManifest.xml中修改android:name为新建的Application
 
 	**Android 代码范例**
-	
+
 	```
 	public class MyApp extends Application implements XlinkNetListener
 	```
@@ -206,7 +206,7 @@
 4. 在自定义Application 下的onCreate()函数调用XlinkAgent.init进行SDK初始化
 
 	**Android 代码范例**
-	
+
 	```
 	// 初始化sdk
 	 XlinkAgent.init(this);
@@ -218,25 +218,25 @@
 * 注册SDK通用监听器是为了能让APP收到来自SDK的响应事件，包含了登录、接收设备数据等回调接口。该监听器是SDK使用中十分重要的一个监听器，与SDK相关的操作都会在这里会回调，如果没有正确注册通用监听器，将无法正常使用SDK。
 
 	**Android 代码范例**
-	
+
 	```
 	//设置SDK回调监听器
 	XlinkAgent.getInstance().addXlinkListener(this);
 	//可以在该监听器中直接更新UI
 	```
-	
+
 6.目前SDK连接是TCP与UDP(即内网和外网)同时进行连接，若需要SDK优先进行内网连接，可在SDK调用init方法之后添加，调用示例如下：
 
 **Android 代码范例**
-          
+
           XlinkAgent.getInstance().setPreInnerServiceMode(true);
-          
-          调用该方法后，sdk会优先进行内网连接，连接失败或者超时再尝试进行外网连接 
-          
+
+          调用该方法后，sdk会优先进行内网连接，连接失败或者超时再尝试进行外网连接
+
 ####注意：
   调用初始化方法XlinkAgent.init(Context)和添加监听的回调XlinkNetListener方法不能在子线程中进行操作，否则可能会出错
-          
-            
+
+
 
 **IOS**
 
@@ -263,9 +263,9 @@
 1. **用户注册**
 
 	可通过手机或者邮箱在云智易平台下注册成为一个云智易用户。通过账号和密码进行认证获得一个有效的调用凭证，即可通过调用凭证使用云智易用户相关的RESTful接口。
-	
+
 	**URL：/v2/user_register**
-	
+
 	[Http RESTful接口文档参见《用户身份接口》](https://github.com/xlink-corp/xlink-sdk/blob/master/%E5%BA%94%E7%94%A8%E7%AB%AF%E5%BC%80%E5%8F%91%E6%96%87%E6%A1%A3/%E5%BA%94%E7%94%A8%E7%AB%AFRESTful%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3/%E7%94%A8%E6%88%B7%E8%BA%AB%E4%BB%BD%E6%8E%A5%E5%8F%A3.md)
 
 	**注：使用邮箱注册用户后，系统会往注册的邮箱发送一封认证激活邮件，需要查看邮件并点击邮箱中的链接进行账号激活后才能正常使用账号。**
@@ -277,7 +277,7 @@
 
 	```
 	//使用邮箱注册用户，调用void registerUserByMail(String mail, String name, String pwd, final ResultCallback callback)
-	
+
 	HttpManage.getInstance().registerUserByMail(email, name, pwd, new HttpManage.ResultCallback < String > () {
             @Override
             public void onError(Header[] headers, HttpManage.Error error) {
@@ -292,9 +292,9 @@
 	```
 
 	**IOS调用示例**
-	
+
 	**开发者需要手动将HttpRequest里面的宏定义 CorpId 后面的企业ID修改为自己企业的企业ID**
-	 
+
 	```
 	+(void)registerWithAccount:(NSString *)account withNickname:(NSString *)nickname withVerifyCode:(NSString *)verifyCode withPassword:(NSString *)pwd didLoadData:(MyBlock)block;
 	```
@@ -311,7 +311,7 @@
 	![](image/登录.png)
 
 	**Android 调用示例**
-	
+
 	```
 	//HttpManage.java 封装了此Http调用
     void login(String mail, String pwd, final ResultCallback callback)
@@ -328,9 +328,9 @@
             }
         });
 	```
-	
+
 	**IOS 调用示例**
-	
+
 	```
 	+(void)authWithAccount:(NSString *)account withPassword:(NSString *)pwd didLoadData:(MyBlock)block;
 	```
@@ -435,10 +435,10 @@ SKD会根据网络连接情况自适应内外网络环境，会自动选择速�
 	![](image/云端连接.png)
 
 	**Android  调用示例**
-	
+
 	订阅设备前，首先要获取设备的subKey才能进行订阅，可以先判断设备的subkey是否存在，若不存在则需要通过accessKey进行获取，调用方式如下：
-	
-	  
+
+
 	     if（device.getXDevice().getSubKey() <= 0 ){
 	    XlinkAgent.getInstance().getInstance().getDeviceSubscribeKey(device.getXDevice(), device.getXDevice().getAccessKey(), new GetSubscribeKeyListener() {
                 @Override
@@ -448,10 +448,10 @@ SKD会根据网络连接情况自适应内外网络环境，会自动选择速�
                 }
             });
             }
-            
+
 	 通过上面步骤获取到设备的订阅凭证subKey后进行调用订阅的方法进行订阅
- 
- 
+
+
                    XlinkAgent.getInstance().subscribeDevice(device.getXDevice(), device.getXDevice().getSubKey(), new SubscribeDeviceListener() {
                 @Override
                 public void onSubscribeDevice(XDevice xdevice, int code) {
@@ -460,10 +460,10 @@ SKD会根据网络连接情况自适应内外网络环境，会自动选择速�
                     }
                 }
             });
-     
- 
+
+
 	如果设备已经订阅，或者设备在订阅列表中存在，那么就不需要进行重复订阅了，那么就可以通过accessKey和subKey进行设备的链接，调用方式如下：
-	
+
 	//根据上一步内网发现的设备，使用AccesKey和subKey进行设备连接 如设备未设置AccessKey，连接前需要先进行AccessKey设置。
     int ret = XlinkAgent.getInstance().connectDevice(device.getXDevice(),device.getXDevice().getAccessKey(),device.getXDevice().getSubKey(), connectDeviceListener);
         if (ret < 0) {// 调用设备失败
@@ -486,7 +486,7 @@ SKD会根据网络连接情况自适应内外网络环境，会自动选择速�
          }
      });
 	```
-	
+
 	```
 	 /**
      * 连接设备回调。该回调在主程序，可直接更改ui
@@ -524,16 +524,16 @@ SKD会根据网络连接情况自适应内外网络环境，会自动选择速�
         }
 
 	**IOS 调用示例**
-	
+
 	如果用户订阅过设备或者手机与设备处于同一网络，直接连接设备即可（会自动订阅）。用户也可以手动订阅设备（v3版本后需要通过accesskey调用方法换取SUBKEY订阅）
 
 	```
 	//获取SUBKEY
 	-(int)getSubKeyWithDevice:(DeviceEntity *)device withAccesskey:(NSNumber *)ack;
-	
+
 	//订阅设备
 	-(int)subscribeDevice:(DeviceEntity *)device andAuthKey:(NSNumber *)authKey andFlag:(int8_t)flag;
-	
+
 	//连接设备函数
 	-(void)onGotDeviceByScan:(DeviceEntity *)device;
 
@@ -577,7 +577,7 @@ SDK
               //发送数据成功
         }
 	```
-	
+
 	```
    //发送成功后再收到设备相应时回回调
     private SendPipeListener pipeListener = new SendPipeListener() {
@@ -669,11 +669,11 @@ SDK
 		- [向设备发送透传数据 int sendPipeData(XDevice device, byte[] data, int timeOut,SendPipeListener listener)](#sendPipeData2)
 		- [设备重命名 int renameDevice(XDevice xdevice,String deviceName,RenameDeviceListener baseListener)](#renameDevice)
 	- [3.2.4 XlinkNetListener 回调说明](#step3.2.4)
-		- [内网连接回调 onStart(int code)](#onStart) 
+		- [内网连接回调 onStart(int code)](#onStart)
 		- [外网连接回调 onLogin(int code)](#onLogin)
 		- [SDK断开连接回调 onDisconnect(int code)](#onDisconnect)
 		- [SDK本地连接断开回调 onLocalDisconnect(int code)](#onLocalDisconnect)
-		- [SDK 透传数据回调 onRecvPipeData(short messageId,XDevice device,  byte[] data)](#onRecvPipeData) 
+		- [SDK 透传数据回调 onRecvPipeData(short messageId,XDevice device,  byte[] data)](#onRecvPipeData)
 		- [SDK 云端透传数据 onRecvPipeSyncData(short messageId,XDevice device, byte[] data)](#onRecvPipeSyncData)
 		- [数据端点更新回调 onDataPointUpdate(XDevice xDevice, List < DataPiont > dataPionts)](#onDataPointUpdate)
 		- [设备状态改变回调 onDeviceStateChanged(XDevice xdevice, int state)](#onDeviceStateChanged)
@@ -733,7 +733,7 @@ APP接口分为三大部分
 
 #### <a name="step3.2.1">3.2.1 设备信息类XDevice和数据节点DataPoint介绍</a>
   1.XDevice 是SDK保存设备的信息的类，由SDK封装与具体设备连接、通信的必需的设备信息的对象，XDevice对象可以通过xlinkAgent的scanDeviceByProductId方法进行局域网设备的扫描，从而获得具体设备的XDevice对象,也可以通过调用HTTP接口的获取订阅设备列表进行获取相关的订阅的设备的信息，然后通过一定的数据结构，并调用AxlinkAgent的jsonToDevice方法进行转换获取相应地XDevice对象，具体的使用参考3.2.2AndroidSDK功能函数，以下是XDevice的属性的介绍：
-  
+
 
 **属性：**
 
@@ -760,7 +760,7 @@ XDevice对象属性获取时有些是非必需属性，所以可能部分项目�
 2.设备数据端点是服务器向SDK推送部分节点数据的封装类，主要是通过XlinkNetListener的public void onDataPointUpdate(XDevice xDevice, List<DataPoint> dataPionts, int channel)回调，下面是DataPoint的数据项介绍：
 
 **构造函数介绍：**
-public DataPoint(int index, int type) 
+public DataPoint(int index, int type)
 其中index为数据端点序号，type为数据端点类型，具体介绍参考以下field介绍
 
 
@@ -777,10 +777,10 @@ public DataPoint(int index, int type)
 | description|datapoint.getDescription()|数据端点描述
 | symbol|datapoint.getSymbol()|数据端点符号
 
-   
-    
+
+
  **DataPoint type值说明：**   
- 
+
 |type 定义|具体int值|说明
 |---------|---------|---------
 |DP_TYPE_BOOL|1|布尔值
@@ -849,7 +849,7 @@ _ _ _
 
 **方法说明：**
 
-* 使用user_id和app_key登录到CM服务器。user_id和app_key的获取，请查看demo代码及用户HTTP接口开发文档 
+* 使用user_id和app_key登录到CM服务器。user_id和app_key的获取，请查看demo代码及用户HTTP接口开发文档
 * 获取到的user_id和app_key，由外部APP缓存维护。
 * 该方法不用重复调用，调用一次后，会自己断线重连
 * 只有login成功后，才能使用跟云端有关的服务
@@ -890,7 +890,7 @@ _ _ _
 | 参数 | 说明 |
 |--------|--------|
 | pre | 是否优先内网连接|
-  
+
 **调用示例：**
 
     XlinkAgent.getInstance().setPreInnerServiceMode(true);
@@ -984,11 +984,11 @@ _ _ _
 **调用示例：**
 
    如果是通过Http的获取订阅列表的接口获取的订阅设备相关数据，其返回格式为：
-   
-     
+
+
      [{"is_online":true,"product_id":"160fa2ad2e193e00160fa2ad2e193e01","            is_active":true,"active_code":"1e0fa2ad3c417400","mcu_mod":"0","mcu_version":0,"firmware_mod":"1","mac":"ACCF238E4204",            "active_date":"2016-01-20T09:15:01.00Z","last_login":"2016-01-20T16:24:57.788Z","id":452872161,            "authorize_code":"1e0fa2ad3c417400","firmware_version":1,"role":1,"access_key":0},            {"is_online":true,"product_id":"160fa2ad2e193e00160fa2ad2e193e01",            "is_active":true,"active_code":"1e0fa2ad3bfed000","mcu_mod":"0","mcu_version":0,"firmware_mod":"1",            "mac":"ACCF238E7EA0","active_date":"2016-01-19T18:28:24.00Z","last_login":"2016-01-20T16:24:24.366Z",            "id":452875703,"authorize_code":"1e0fa2ad3bfed000","firmware_version":1,"role":0,"access_key":755660671}]
-            
-            
+
+
   那么可以通过转换成
   {"protocol":1
                        "device":{
@@ -1001,22 +1001,22 @@ _ _ _
                         "accesskey":accesskey
                         }}
                         的Json格式，然后封装成JSONObject对象，再调用
-                        
+
          XDevice xdevice=XlinkAgent.JsonToDevice(json);
-         
-         
-       
+
+
+
   获得XDevice对象，其示例代码如下：
-  
+
           //subscribeDevice为获取设备订阅列表接口返回的数据的封装类
           int mcuhardversion = subscribeDevice.getMcu_version();                        int wifihardversion = subscribeDevice.getFirmware_version();                        int mcufirmwareversion = subscribeDevice.getMcu_version();                        String mac = subscribeDevice.getMac();                        String pid = subscribeDevice.getProduct_id();                        int deviceid = subscribeDevice.getId();                        int accessKey = subscribeDevice.getAccess_key();                        JSONObject json = new JSONObject();                        try {                            json.put("protocol", 1);                            JSONObject deviceJson = new JSONObject();                            deviceJson.put("macAddress", mac);                            deviceJson.put("deviceID", deviceid);                            deviceJson.put("version", 2);//固件版本是2的新固件，返回的是1，这里强制改为2，不强制修改会导致第一次连接设备认证失败                            deviceJson.put("mcuHardVersion", mcuhardversion);                            deviceJson.put("mucSoftVersion", mcufirmwareversion);                            deviceJson.put("productID", pid);                            deviceJson.put("accesskey", accessKey);                            json.put("device", deviceJson);                            XDevice xdevice = XlinkAgent.JsonToDevice(json);
                             }catch(Exception e){
                             e.printTraceStack();
                             }
-                            
-                            
-                            
-     
+
+
+
+
 
 **返回值：**
 
@@ -1045,7 +1045,7 @@ _ _ _
                         "accesskey":accesskey
                         }}
                         的JsonObject对象
-                        
+
 **调用示例：**
 
     JSONObject mObj = XlinkAgent.deviceToJson(device);
@@ -1081,7 +1081,7 @@ _ _ _
 **调用示例：**
 
     XlinkAgent.getInstance().addXlinkListener(listener);
-    
+
 **参数：**
 
 | 参数 | 说明 |
@@ -1098,7 +1098,7 @@ _ _ _
 **调用示例：**
 
        XlinkAgent.getInstance().debug(debug);
-       
+
 | 参数 | 说明 |
 |--------|--------|
 | debug | 是否打印debug日志
@@ -1166,7 +1166,7 @@ _ _ _
                 }
                 return;
             }
-            
+
      private ScanDeviceListener scanListener = new  ScanDeviceListener() {
         @Override
           public void onGotDeviceByScan(final XDevice xdevice) {
@@ -1222,7 +1222,7 @@ _ _ _
 
 **结果回调：**
 
-	SetDeviceAccessKeyListener对象的 
+	SetDeviceAccessKeyListener对象的
 	public void onSetLocalDeviceAccessKey(XDevice device, int code, int messageId)
 
 
@@ -1252,7 +1252,7 @@ _ _ _
 
 **结果回调：**
 
-	GetSubscribeKeyListener对象的 
+	GetSubscribeKeyListener对象的
 	public void onGetSubscribekey(XDevice xdevice, int code, int subKey)
 
 **调用示例**
@@ -1308,18 +1308,18 @@ _ _ _
         } else {
             //调用成功
         }
-        
-        
+
+
     private ConnectDeviceListener connectDeviceListener = new ConnectDeviceListener() {
 
         @Override
         public void onConnectDevice(XDevice xDevice, int result) {
             switch (result) {
-                
+
                 case XlinkCode.DEVICE_STATE_LOCAL_LINK:
                    // 连接设备成功 设备处于内网
                     break;
-                
+
                 case XlinkCode.DEVICE_STATE_OUTER_LINK:
                     // 连接设备成功 设备处于云端
                     break;
@@ -1350,10 +1350,10 @@ _ _ _
 
 | 参数 | 说明 |
 |--------|--------|
-| XDevice | Device实体兑现 | 
-| accessKey | 设备授权码 | 
-| subKey | 订阅授权码 | 
-| connectListener | 监听器 | 
+| XDevice | Device实体兑现 |
+| accessKey | 设备授权码 |
+| subKey | 订阅授权码 |
+| connectListener | 监听器 |
 
 **返回值：**
 
@@ -1384,9 +1384,9 @@ _ _ _
 
 | 参数 | 说明 |
 |--------|--------|
-| XDevice | Device实体兑现 | 
-| auth | 设备授权码 | 
-| connectListener | 监听器 | 
+| XDevice | Device实体兑现 |
+| auth | 设备授权码 |
+| connectListener | 监听器 |
 
 **返回值：**
 
@@ -1418,9 +1418,9 @@ _ _ _
 
 | 参数 | 说明 |
 |--------|--------|
-| XDevice | Device实体兑现 | 
-| accessKey | 设备授权码 | 
-| connectListener | 监听器 | 
+| XDevice | Device实体兑现 |
+| accessKey | 设备授权码 |
+| connectListener | 监听器 |
 
 **返回值：**
 
@@ -1453,8 +1453,8 @@ _ _ _
 
 | 参数 | 说明 |
 |--------|--------|
-| XDevice | Device实体兑现 | 
-| connectListener | 监听器 | 
+| XDevice | Device实体兑现 |
+| connectListener | 监听器 |
 
 **返回值：**
 
@@ -1775,7 +1775,7 @@ _ _ _
 * 向设备发送pipe数据包.
 
 **调用示例**
-    
+
     int ret=XlinkAgent.getInstance().sendPipeData(device,data, listener);
            if (ret < 0) {
                     switch (ret) {
@@ -1792,11 +1792,11 @@ _ _ _
                           //发送数据失败，错误码：" + ret);
                             break;
                     }
-                   
+
                 } else {
                    //发送数据调用成功
                 }
-                
+
      public SendPipeCallbackListener pipeListener = new SendPipeCallbackListener() {
 
         @Override
@@ -1842,8 +1842,8 @@ _ _ _
 **结果回调：**
 
 	SendPipeCallbackListener.onSendPipeData(XDevice device, int code, int messageId)
-	
-	
+
+
 	- - -
 
 ####<a name="sendPipeData2">向设备发送透传数据</a>
@@ -1877,8 +1877,8 @@ _ _ _
 **结果回调：**
 
 		SendPipeCallbackListener.onSendPipeData(XDevice device, int code, int messageId)
-		
-		
+
+
 #### <a name="renameDevice">设备重命名</a>
 #####int renameDevice(XDevice xdevice,String deviceName,RenameDeviceListener baseListener)
 
@@ -1955,7 +1955,7 @@ XlinkCode 常量|int实际值|说明|
 |---------|---------|---------|
 | `CLOUD_STATE_DISCONNECT` | -1 | 网络问题导致和服务器连接中端(不需要处理，会自动重连) |
 | `CLOUD_KEEPALIVE_ERROR` | -2 | 和服务器心跳异常，导致从服务器掉线(不需要处理，会自动重连) |
-| `CLOUD_SERVICE_KILL` | -3 |XlinkTcpServrce服务被异常杀死（如360等安全软件）.（需要重新调用login函数）| 
+| `CLOUD_SERVICE_KILL` | -3 |XlinkTcpServrce服务被异常杀死（如360等安全软件）.（需要重新调用login函数）|
 | `CLOUD_USER_EXTRUSION` | -4 | 该用户在其他地方登录(提示用户，帐号被挤) |
 
 
@@ -2257,7 +2257,7 @@ device | 设备实体
 |--------|--------|
 | device | 设备实体;
 | oldAuth | 旧密码，如果设备本身并没有设置授权码的话，该参数置为@"";
-| newAuth | 新密码; 
+| newAuth | 新密码;
 
 **返回值：**
 
@@ -2457,6 +2457,21 @@ device | 设备实体
 msgID（非0） | 成功
 0 | 失败
 
+
+**DataPoint type值说明：**   
+
+|type 定义|具体int值|说明
+|---------|---------|---------
+|DP_TYPE_BOOL|1|布尔值
+|DP_TYPE_BYTE|2|byte单字节
+|DP_TYPE_SHORT|3|int16 (short)
+|DP_TYPE_INT|4|int32 (int)
+|DP_TYPE_FLOAT|5|float
+|DP_TYPE_STRING|6|string
+|DP_TYPE_BYTEARRAY|7|byte[]字节数组
+
+> 如无特别说明，DataPoint type全局统一。
+
 ##### <a name="step3.2.6.15"> 15. 云端设置数据端点 </a>
 
 **函数：**
@@ -2583,7 +2598,7 @@ CODE_STATE_OFFLINE | -101 | 与服务器socket连接断开;
 
 | 参数 | 说明 |
 |--------|--------|
-device | 设备实体 
+device | 设备实体
 
 > 如果扫描到了多个设备，该回调会多次调用;
 
@@ -2852,16 +2867,16 @@ APP开发者只用关心几个属性即可；
 
 	设备是否初始化过，初始化的概念就是设备有没有被设置过授权码，如果没有就需要先设置授权码才可以使用。
 
-##### @property (assign, nonatomic, readonly) bool isConnected; 
+##### @property (assign, nonatomic, readonly) bool isConnected;
 	设备是否连接上
-	
+
 ##### @property (assign, nonatomic, readonly) bool isConnecting;
 	设备是否正在连接
-	
-##### @property (assign, nonatomic, readonly) bool isLANOnline; 
+
+##### @property (assign, nonatomic, readonly) bool isLANOnline;
 	局域网是否在线
-	
-##### @property (assign, nonatomic, readonly) bool isWANOnline; 
+
+##### @property (assign, nonatomic, readonly) bool isWANOnline;
 	云端是否在线
 
 ##### -(NSDictionary*)getDictionaryFormatWithProtocol:(int)protocol;
@@ -2913,7 +2928,7 @@ A: 设备需要在线并且连接上云端才能订阅
 A: 需要通过方法的XDevice进行判断具体是哪个设备的数据，然后再进行数据匹配或者过滤
 
 - Q：如何实现数据推送
-A: 在云端配置或者设备实现通过云端推送数据需要实现XlinkNetListener 的onEventNotify回调方法进行处理 
+A: 在云端配置或者设备实现通过云端推送数据需要实现XlinkNetListener 的onEventNotify回调方法进行处理
 
 - Q：启动调用连接和控制设备调用失败
 A: 查看是否已经调用login方法，并SDK进行了OnLogin的成功回调
@@ -3424,19 +3439,19 @@ Content
 
     1.添加订阅设备返回错误码3表示设备未在该企业授权的错误码描述。
     2.添加初始化SDK、设置监听器不能再子线程操作的描述。
-    
+
 2016-10-8：添加pipe数据接收时回调消息ID,在之前的版本如v2,参数是不一样的，所以更新SDK时需要修改接口函数方法才能正常使用
 
 2016-12-7：添加float类型的数据端点的支持
 
 2016-12-13：添加设备重命名的方法
- 
-    
-    
+
+
+
 ####IOS
 
 2016.9.26: 添加Json转DeviceEntity方法描述以及手动获取SubKey的方法
 
-     1. 增加IOS JSON转DeviceEntity的方法描述 
-     2.增加IOS调用函数与回调的引导目录 
-     3.增加IOS手动获取SUBKEY方法 
+     1. 增加IOS JSON转DeviceEntity的方法描述
+     2.增加IOS调用函数与回调的引导目录
+     3.增加IOS手动获取SUBKEY方法
