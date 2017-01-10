@@ -3455,3 +3455,5 @@ Content
      1. 增加IOS JSON转DeviceEntity的方法描述
      2.增加IOS调用函数与回调的引导目录
      3.增加IOS手动获取SUBKEY方法
+
+2017.1.10: 更新ios数据端点类型与安卓统一
