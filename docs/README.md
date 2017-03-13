@@ -695,8 +695,7 @@ SDK
 		- [13. 探测云端设备状态 -(int)probeDevice:(DeviceEntity*)device](#step3.2.6.13)
 		- [14. 本地设置数据端点 -(unsigned short)setLocalDataPoints:(NSArray<DataPointEntity *> *)dataPoints withDevice:(DeviceEntity *)device](#step3.2.6.14)
 		- [15. 云端设置数据端点 -(unsigned short)setCloudDataPoints:(NSArray<DataPointEntity *> *)dataPoints withDevice:(DeviceEntity *)device](#step3.2.6.15)
-		- [16. 获取SDK中所有设备列表 -(NSArray*)getAllDevice](#step3.2.6.16)
-		- [17. 释放SDK -(void)stop](#step3.2.6.17)
+		- [16. 释放SDK -(void)stop](#step3.2.6.16)
 	- [3.2.7 IOS 代理回调说明](#step3.2.7)
 		- [1. onStart](#step3.2.7.1)
 		- [2. onLogin](#step3.2.7.2)
@@ -712,8 +711,9 @@ SDK
 		- [12. onDeviceProbe](#step3.2.7.12)
 		- [13. onConnectDevice](#step3.2.7.13)
 		- [14. onDeviceStateChanged](#step3.2.7.14)
-		- [15. onLocalDataPoint2Update](#step3.2.7.15)
-		- [16. onCloudDataPoint2Update](#step3.2.7.16)
+		- [15. onGotEventNotify](#step3.2.7.15)
+		- [16. onLocalDataPoint2Update](#step3.2.7.16)
+		- [17. onCloudDataPoint2Update](#step3.2.7.17)
 	- [3.2.8 IOS DeviceEntity属性说明代理回调说明](#step3.2.8)
 - [3.3 常见问题](#step3.3)
 - [3.4 附录](#step3.4)
@@ -986,7 +986,14 @@ _ _ _
    如果是通过Http的获取订阅列表的接口获取的订阅设备相关数据，其返回格式为：
 
 
-     [{"is_online":true,"product_id":"160fa2ad2e193e00160fa2ad2e193e01","            is_active":true,"active_code":"1e0fa2ad3c417400","mcu_mod":"0","mcu_version":0,"firmware_mod":"1","mac":"ACCF238E4204",            "active_date":"2016-01-20T09:15:01.00Z","last_login":"2016-01-20T16:24:57.788Z","id":452872161,            "authorize_code":"1e0fa2ad3c417400","firmware_version":1,"role":1,"access_key":0},            {"is_online":true,"product_id":"160fa2ad2e193e00160fa2ad2e193e01",            "is_active":true,"active_code":"1e0fa2ad3bfed000","mcu_mod":"0","mcu_version":0,"firmware_mod":"1",            "mac":"ACCF238E7EA0","active_date":"2016-01-19T18:28:24.00Z","last_login":"2016-01-20T16:24:24.366Z",            "id":452875703,"authorize_code":"1e0fa2ad3bfed000","firmware_version":1,"role":0,"access_key":755660671}]
+     [{"is_online":true,"product_id":"160fa2ad2e193e00160fa2ad2e193e01","
+            is_active":true,"active_code":"1e0fa2ad3c417400","mcu_mod":"0","mcu_version":0,"firmware_mod":"1","mac":"ACCF238E4204",
+            "active_date":"2016-01-20T09:15:01.00Z","last_login":"2016-01-20T16:24:57.788Z","id":452872161,
+            "authorize_code":"1e0fa2ad3c417400","firmware_version":1,"role":1,"access_key":0},
+            {"is_online":true,"product_id":"160fa2ad2e193e00160fa2ad2e193e01",
+            "is_active":true,"active_code":"1e0fa2ad3bfed000","mcu_mod":"0","mcu_version":0,"firmware_mod":"1",
+            "mac":"ACCF238E7EA0","active_date":"2016-01-19T18:28:24.00Z","last_login":"2016-01-20T16:24:24.366Z",
+            "id":452875703,"authorize_code":"1e0fa2ad3bfed000","firmware_version":1,"role":0,"access_key":755660671}]
 
 
   那么可以通过转换成
@@ -1009,7 +1016,27 @@ _ _ _
   获得XDevice对象，其示例代码如下：
 
           //subscribeDevice为获取设备订阅列表接口返回的数据的封装类
-          int mcuhardversion = subscribeDevice.getMcu_version();                        int wifihardversion = subscribeDevice.getFirmware_version();                        int mcufirmwareversion = subscribeDevice.getMcu_version();                        String mac = subscribeDevice.getMac();                        String pid = subscribeDevice.getProduct_id();                        int deviceid = subscribeDevice.getId();                        int accessKey = subscribeDevice.getAccess_key();                        JSONObject json = new JSONObject();                        try {                            json.put("protocol", 1);                            JSONObject deviceJson = new JSONObject();                            deviceJson.put("macAddress", mac);                            deviceJson.put("deviceID", deviceid);                            deviceJson.put("version", 2);//固件版本是2的新固件，返回的是1，这里强制改为2，不强制修改会导致第一次连接设备认证失败                            deviceJson.put("mcuHardVersion", mcuhardversion);                            deviceJson.put("mucSoftVersion", mcufirmwareversion);                            deviceJson.put("productID", pid);                            deviceJson.put("accesskey", accessKey);                            json.put("device", deviceJson);                            XDevice xdevice = XlinkAgent.JsonToDevice(json);
+          int mcuhardversion = subscribeDevice.getMcu_version();
+                        int wifihardversion = subscribeDevice.getFirmware_version();
+                        int mcufirmwareversion = subscribeDevice.getMcu_version();
+                        String mac = subscribeDevice.getMac();
+                        String pid = subscribeDevice.getProduct_id();
+                        int deviceid = subscribeDevice.getId();
+                        int accessKey = subscribeDevice.getAccess_key();
+
+                        JSONObject json = new JSONObject();
+                        try {
+                            json.put("protocol", 1);
+                            JSONObject deviceJson = new JSONObject();
+                            deviceJson.put("macAddress", mac);
+                            deviceJson.put("deviceID", deviceid);
+                            deviceJson.put("version", 2);//固件版本是2的新固件，返回的是1，这里强制改为2，不强制修改会导致第一次连接设备认证失败
+                            deviceJson.put("mcuHardVersion", mcuhardversion);
+                            deviceJson.put("mucSoftVersion", mcufirmwareversion);
+                            deviceJson.put("productID", pid);
+                            deviceJson.put("accesskey", accessKey);
+                            json.put("device", deviceJson);
+                            XDevice xdevice = XlinkAgent.JsonToDevice(json);
                             }catch(Exception e){
                             e.printTraceStack();
                             }
@@ -2498,29 +2525,7 @@ device | 设备实体
 msgID（非0） | 成功
 0 | 失败
 
-##### <a name="step3.2.6.16"> 16. 获取SDK中所有设备列表 </a>
-
-**函数：**
-
-```
- -(NSArray*)getAllDevice;
-```
-
-**说明：**
-
-* 得到所有缓存的设备列表，返回的NSArray中包含的是DeviceEntity对象
-
-**参数：**
-
-* 无
-
-**返回值：**
-
-| 值 | 说明 |
-|--------|--------|
-NSArray | DeviceEntity * 实体的队列
-
-##### <a name="step3.2.6.17"> 17. 释放SDK </a>
+##### <a name="step3.2.6.16"> 16. 释放SDK </a>
 
 **函数：**
 
@@ -2807,7 +2812,7 @@ device | 设备实体
 
 **说明：**
 
-* 设备上下线状态回调
+* 设备连接状态改变回调
 
 **参数：**
 
@@ -2815,7 +2820,49 @@ device | 设备实体
 |--------|--------|
 | device | 设备实体|
 
-##### <a name="step3.2.7.15"> 15. onLocalDataPoint2Update </a>
+##### <a name="step3.2.7.15"> 15. 收到EventNotify通知 </a>
+
+**函数：**
+
+```
+-(void)onGetEventNotify:(EventNotifyRetPacket *)packet;
+```
+
+**说明：**
+
+* 收到服务器通过tcp发送下来的通知
+
+**参数：**
+
+| 参数 | 说明 |
+|--------|--------|
+packet | 具体的通知内容
+
+**参数说明：**
+
+* packet.notifyFlag
+	* bit0:来自server的事件
+	* bit1:来自其他device的事件
+	* bit2:来自其他APP的事件
+	* bit3:收到事件后要不要应答, 默认都不需要应答
+	* bit4-7:预留 Reserved
+* packet.fromID :发送者ID 如果是服务端发送的消息, id为0
+* packet.msgType :消息类型
+	* 1:设备端点变化发送的通知 JSON{”index" : 0,”value" : 100,“msg”: 管理台设置的报警内容}
+	* 2:设备端点变化引起的警报JSON{"index" : 0,"value" : 100,“msg”: 管理台设置的报警内容}
+	* 3:设备管理员推送的分享消息JSON{“deviceid” : 123457,”invitecode” : 12345,“type”:0/1/2/3}type:0 分享请求;1 接受分享;2 拒绝分享;3 分享被取消
+	* 4:厂商推送的消息广播JSON{"msgtype": "txt","actiontype": "url/command","url": "http://xxxx.xxx.xxx","command": "xxxx","title": "xxxx","content": "xxxxx"}
+	* 5:设备属性变化通知JSON{"device_id" : 123456789,"type" : "info/prop"}type:info 设备基本属性变化 prop 设备扩展属性变化
+	* 6:用户和设备订阅关系发生变化通知JSON{"device_id" : 123456789,"sub" : 0/1}sub：0 订阅关系取消 1 订阅关系建立
+	* 7:设备在线状态变化引发的通知 JSON{"device_id" : 123456789,"state" : 0 / 1}state: 0 离线 1 上线
+	* 8:设备在线状态变化引发的告警 JSON{"device_id" : 123456789,"state" : 0 / 1}state:0 离线 1 上线
+* packet.notifyData: 前2个字节为字符串长度,后面的所有数据为UTF8格式的JSON字符串
+
+**返回值：**
+
+* 空
+
+##### <a name="step3.2.7.16"> 16. onLocalDataPoint2Update </a>
 
 **函数：**
 
@@ -2837,7 +2884,7 @@ device | 设备实体
 
 > 纯透传APP，该功能用不到；
 
-##### <a name="step3.2.7.16"> 16. onCloudDataPoint2Update </a>
+##### <a name="step3.2.7.17"> 17. onCloudDataPoint2Update </a>
 
 **函数：**
 
