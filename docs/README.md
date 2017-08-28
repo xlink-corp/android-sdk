@@ -2100,7 +2100,7 @@ DEVICE_CHANGED_CONNECT_SUCCEED|	-3|	设备重新连接成功
     	* 2:设备端点变化引起的警报JSON{"index" : 0,"value" : 100,“msg”: 管理台设置的报警内容}
     	* 3:设备管理员推送的分享消息JSON{“device_id” : 123457,”invite_code” : 12345,“type”:0/1/2/3}type:0 分享请求;1 接受分享;2 拒绝分享;3 分享被取消
      	* 4:厂商推送的消息广播JSON{"msg_type": "txt","action_type": "url/command","url": "http://xxxx.xxx.xxx","command": "xxxx","title": "xxxx","content": "xxxxx"}
-     	* 5:设备属性变化通知JSON{"device_id" : 123456789,"type" : "info/prop"}type:info 设备基本属性变化 prop 设备扩展属性变化
+     	* 5:设备属性变化通知JSON{"device_id" : 123456789,"type" : "info/prop/online/offline"}type:info 设备基本属性变化 prop 设备扩展属性变化  online 设备上线   offline 设备下线
      	* 6:用户和设备订阅关系发生变化通知JSON{"device_id" : 123456789,"sub" : 0/1}sub：0 订阅关系取消 1 订阅关系建立
      	* 7:设备在线状态变化引发的通知 JSON{"device_id" : 123456789,"state" : 0 / 1}state: 0 离线 1 上线
      	* 8:设备在线状态变化引发的告警 JSON{"device_id" : 123456789,"state" : 0 / 1}state:0 离线 1 上线
@@ -2852,7 +2852,7 @@ packet | 具体的通知内容
 	* 2:设备端点变化引起的警报JSON{"index" : 0,"value" : 100,“msg”: 管理台设置的报警内容}
 	* 3:设备管理员推送的分享消息JSON{“deviceid” : 123457,”invitecode” : 12345,“type”:0/1/2/3}type:0 分享请求;1 接受分享;2 拒绝分享;3 分享被取消
 	* 4:厂商推送的消息广播JSON{"msgtype": "txt","actiontype": "url/command","url": "http://xxxx.xxx.xxx","command": "xxxx","title": "xxxx","content": "xxxxx"}
-	* 5:设备属性变化通知JSON{"device_id" : 123456789,"type" : "info/prop"}type:info 设备基本属性变化 prop 设备扩展属性变化
+	* 5:设备属性变化通知JSON{"device_id" : 123456789,"type" : "info/prop/online/offline"}type:info 设备基本属性变化 prop 设备扩展属性变化  online 设备上线   offline 设备下线
 	* 6:用户和设备订阅关系发生变化通知JSON{"device_id" : 123456789,"sub" : 0/1}sub：0 订阅关系取消 1 订阅关系建立
 	* 7:设备在线状态变化引发的通知 JSON{"device_id" : 123456789,"state" : 0 / 1}state: 0 离线 1 上线
 	* 8:设备在线状态变化引发的告警 JSON{"device_id" : 123456789,"state" : 0 / 1}state:0 离线 1 上线
